@@ -1,0 +1,151 @@
+<!-- 创建项目页面 -->
+<view class="container">
+  <view class="form-container">
+    <view class="form-title">创建新项目</view>
+
+    <!-- 项目名称 -->
+    <view class="form-item">
+      <label class="form-label required">项目名称</label>
+      <input 
+        class="form-input" 
+        placeholder="请输入项目名称"
+        value="{{projectName}}"
+        bindinput="onProjectNameInput"
+      />
+      <!-- 预设项目下拉 -->
+      <view class="preset-list" wx:if="{{presetProjects.length > 0}}">
+        <view
+          class="preset-item {{showDeletePreset && deleteType === 'project' && deleteIndex === index ? 'shaking' : ''}}"
+          wx:for="{{presetProjects}}"
+          wx:key="index"
+          bindtap="selectPresetProject"
+          bindlongpress="handlePresetLongPress"
+          data-name="{{item}}"
+          data-type="project"
+          data-index="{{index}}"
+        >
+          {{item}}
+          <view
+            class="btn-delete-x"
+            wx:if="{{showDeletePreset && deleteType === 'project' && deleteIndex === index}}"
+            bindtap="deletePresetItem"
+            catchtap="deletePresetItem"
+            data-type="project"
+            data-index="{{index}}"
+          >
+            ×
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 工头信息 -->
+    <view class="form-item">
+      <label class="form-label required">工头姓名</label>
+      <input 
+        class="form-input" 
+        placeholder="请输入工头姓名"
+        value="{{foreman}}"
+        bindinput="onForemanInput"
+      />
+      <!-- 预设工头下拉 -->
+      <view class="preset-list" wx:if="{{presetForemen.length > 0}}">
+        <view
+          class="preset-item {{showDeletePreset && deleteType === 'foreman' && deleteIndex === index ? 'shaking' : ''}}"
+          wx:for="{{presetForemen}}"
+          wx:key="index"
+          bindtap="selectPresetForeman"
+          bindlongpress="handlePresetLongPress"
+          data-name="{{item}}"
+          data-type="foreman"
+          data-index="{{index}}"
+        >
+          {{item}}
+          <view
+            class="btn-delete-x"
+            wx:if="{{showDeletePreset && deleteType === 'foreman' && deleteIndex === index}}"
+            bindtap="deletePresetItem"
+            catchtap="deletePresetItem"
+            data-type="foreman"
+            data-index="{{index}}"
+          >
+            ×
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 工头电话 -->
+    <view class="form-item">
+      <label class="form-label required">工头电话</label>
+      <input
+        class="form-input"
+        type="number"
+        placeholder="请输入工头电话号码"
+        value="{{foremanPhone}}"
+        bindinput="onForemanPhoneInput"
+        maxlength="11"
+      />
+      <!-- 预设工头电话 -->
+      <view class="preset-list" wx:if="{{presetPhones.length > 0}}">
+        <view
+          class="preset-item {{showDeletePreset && deleteType === 'phone' && deleteIndex === index ? 'shaking' : ''}}"
+          wx:for="{{presetPhones}}"
+          wx:key="index"
+          bindtap="selectPresetPhone"
+          bindlongpress="handlePresetLongPress"
+          data-phone="{{item}}"
+          data-type="phone"
+          data-index="{{index}}"
+        >
+          {{item}}
+          <view
+            class="btn-delete-x"
+            wx:if="{{showDeletePreset && deleteType === 'phone' && deleteIndex === index}}"
+            bindtap="deletePresetItem"
+            catchtap="deletePresetItem"
+            data-type="phone"
+            data-index="{{index}}"
+          >
+            ×
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 创建日期 -->
+    <view class="form-item">
+      <label class="form-label required">创建日期</label>
+      <picker 
+        mode="date" 
+        value="{{createDate}}" 
+        start="{{minDate}}"
+        end="{{maxDate}}"
+        bindchange="onDateChange"
+      >
+        <view class="picker-input">
+          <text class="picker-text">{{createDate || '请选择日期'}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 备注（可选） -->
+    <view class="form-item">
+      <label class="form-label">备注</label>
+      <textarea 
+        class="form-textarea" 
+        placeholder="请输入备注信息（选填）"
+        value="{{remarks}}"
+        bindinput="onRemarksInput"
+        maxlength="200"
+      />
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="footer-buttons">
+    <button class="btn btn-outline" bindtap="onCancel">取消</button>
+    <button class="btn btn-primary" bindtap="onConfirm">确认创建</button>
+  </view>
+</view>

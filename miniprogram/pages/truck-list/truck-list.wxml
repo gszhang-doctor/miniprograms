@@ -1,0 +1,123 @@
+<!-- 车次列表页面 -->
+<view class="container">
+  <!-- 顶部信息 -->
+  <view class="header">
+    <view class="project-info">
+      <text class="project-name">{{projectName}}</text>
+      <text class="truck-count">共 {{trucks.length}} 车次</text>
+    </view>
+  </view>
+
+  <!-- 统计信息 -->
+  <view class="stats-card" wx:if="{{stats}}">
+    <view class="stats-row">
+      <view class="stats-item">
+        <text class="stats-label">总方数</text>
+        <text class="stats-value primary-color">{{stats.totalQuantity}}</text>
+        <text class="stats-unit">方</text>
+      </view>
+      <view class="stats-divider"></view>
+      <view class="stats-item">
+        <text class="stats-label">混凝土费用</text>
+        <text class="stats-value primary-color">¥{{stats.concreteAmount}}</text>
+        <text class="stats-unit">元</text>
+      </view>
+    </view>
+    <view class="stats-row" style="margin-top: 32rpx;">
+      <view class="stats-item">
+        <text class="stats-label">泵车费用</text>
+        <text class="stats-value warning-color">¥{{stats.pumpAmount}}</text>
+        <text class="stats-unit">元</text>
+      </view>
+      <view class="stats-divider"></view>
+      <view class="stats-item">
+        <text class="stats-label">总金额</text>
+        <text class="stats-value warning-color">¥{{stats.totalAmount}}</text>
+        <text class="stats-unit">元</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 车次列表 -->
+  <view class="truck-list">
+    <block wx:if="{{trucks.length > 0}}">
+      <view 
+        class="truck-card" 
+        wx:for="{{trucks}}" 
+        wx:key="truckId"
+        bindtap="viewTruckDetail"
+        data-truck="{{item}}"
+      >
+        <view class="truck-header">
+          <view class="truck-no">{{item.truckNo}}</view>
+          <view class="truck-date">{{item.createTime.split(' ')[0]}}</view>
+        </view>
+        
+        <view class="truck-body">
+          <view class="truck-info-row">
+            <text class="info-label">司机：</text>
+            <text class="info-value">{{item.driverName}}</text>
+          </view>
+          <view class="truck-info-row">
+            <text class="info-label">车牌：</text>
+            <text class="info-value">{{item.licensePlate}}</text>
+          </view>
+          <view class="truck-info-row">
+            <text class="info-label">部位：</text>
+            <text class="info-value">{{item.constructionSite}}</text>
+            <text class="info-divider">|</text>
+            <text class="info-label">强度：</text>
+            <text class="info-value">{{item.strengthGrade}}</text>
+          </view>
+          <view class="truck-info-row" wx:if="{{item.pumpCost > 0}}">
+            <text class="info-label">泵车：</text>
+            <text class="info-value warning-color">¥{{item.pumpCost}}</text>
+          </view>
+          <view class="truck-info-row" wx:if="{{item.remarks}}">
+            <text class="info-label">备注：</text>
+            <text class="info-value">{{item.remarks}}</text>
+          </view>
+          <view class="truck-info-row" wx:if="{{item.creator}}">
+            <text class="info-label">创建者：</text>
+            <text class="info-value">{{item.creator}}</text>
+          </view>
+        </view>
+        
+        <view class="truck-footer">
+          <view class="amount-info">
+            <text class="amount-label">{{item.quantity}}方 × ¥{{item.unitPrice}}</text>
+            <text class="amount-label" wx:if="{{item.pumpCost > 0}}">+ 泵车¥{{item.pumpCost}}</text>
+            <text class="amount-value">¥{{item.amount}}</text>
+          </view>
+          <view class="truck-actions">
+            <button
+              class="btn-edit"
+              catchtap="editTruck"
+              data-truck="{{item}}"
+            >
+              编辑
+            </button>
+            <button
+              class="btn-delete"
+              catchtap="deleteTruck"
+              data-truck-id="{{item.truckId}}"
+            >
+              删除
+            </button>
+          </view>
+        </view>
+      </view>
+    </block>
+    
+    <!-- 空状态 -->
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">📦</text>
+      <text>暂无车次记录</text>
+    </view>
+  </view>
+
+  <!-- 添加车次按钮 -->
+  <view class="fab" bindtap="addTruck">
+    <text class="fab-icon">+</text>
+  </view>
+</view>

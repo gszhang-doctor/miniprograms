@@ -1,0 +1,150 @@
+<!-- 创建付款页面 -->
+<view class="container">
+  <!-- 预览弹窗 -->
+  <preview-modal 
+    visible="{{previewVisible}}" 
+    title="付款信息预览"
+    items="{{previewItems}}"
+    bind:cancel="onPreviewCancel"
+    bind:confirm="onPreviewConfirm"
+  />
+  
+  <view class="form-container">
+    <view class="form-title">新增付款记录</view>
+
+    <!-- 付款日期 -->
+    <view class="form-item">
+      <label class="form-label required">付款日期</label>
+      <picker 
+        mode="date" 
+        value="{{paymentDate}}" 
+        start="{{minDate}}"
+        end="{{maxDate}}"
+        bindchange="onDateChange"
+      >
+        <view class="picker-input">
+          <text class="picker-text">{{paymentDate || '请选择日期'}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 付款方式 -->
+    <view class="form-item">
+      <label class="form-label required">付款方式</label>
+      <view class="payment-methods">
+        <view 
+          class="method-btn {{methodIndex === index ? 'active' : ''}}" 
+          wx:for="{{paymentMethods}}" 
+          wx:key="index"
+          bindtap="selectMethod"
+          data-index="{{index}}"
+        >
+          <text class="method-icon">{{getMethodIcon(item)}}</text>
+          <text class="method-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 付款金额 -->
+    <view class="form-item">
+      <label class="form-label required">付款金额</label>
+      <input 
+        class="form-input" 
+        type="digit"
+        placeholder="请输入付款金额"
+        value="{{amount}}"
+        bindinput="onAmountInput"
+      />
+      <!-- 快捷金额 -->
+      <view class="quick-amount-list" wx:if="{{quickAmounts.length > 0}}">
+        <view 
+          class="quick-amount-item" 
+          wx:for="{{quickAmounts}}" 
+          wx:key="index"
+          bindtap="selectQuickAmount"
+          data-amount="{{item}}"
+        >
+          ¥{{item}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 备注 -->
+    <view class="form-item">
+      <label class="form-label">备注（选填）</label>
+      <textarea 
+        class="form-textarea" 
+        placeholder="请输入备注信息，如付款凭证号等"
+        value="{{remarks}}"
+        bindinput="onRemarksInput"
+        maxlength="100"
+      />
+    </view>
+
+    <!-- 图片上传 -->
+    <view class="form-item">
+      <label class="form-label">上传凭证图片（选填）</label>
+      <view class="image-upload">
+        <view 
+          class="upload-btn" 
+          bindtap="chooseImage"
+          wx:if="{{images.length < 3}}"
+        >
+          <text class="upload-icon">+</text>
+          <text class="upload-text">添加图片</text>
+        </view>
+        <view class="image-list">
+          <view 
+            class="image-item" 
+            wx:for="{{images}}" 
+            wx:key="index"
+          >
+            <image 
+              class="image-thumb" 
+              src="{{item}}" 
+              mode="aspectFill"
+              bindtap="previewImage"
+              data-index="{{index}}"
+            />
+            <view 
+              class="image-delete" 
+              bindtap="deleteImage"
+              data-index="{{index}}"
+            >
+              ×
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="upload-tip">最多可上传3张图片</view>
+    </view>
+
+    <!-- 付款预览 -->
+    <view class="payment-preview" wx:if="{{paymentMethods[methodIndex] && amount}}">
+      <view class="preview-header">
+        <text class="preview-title">付款预览</text>
+      </view>
+      <view class="preview-content">
+        <view class="preview-row">
+          <text class="preview-label">付款方式：</text>
+          <text class="preview-value">{{paymentMethods[methodIndex]}}</text>
+        </view>
+        <view class="preview-row">
+          <text class="preview-label">付款金额：</text>
+          <text class="preview-amount">¥{{amount}}</text>
+        </view>
+        <view class="preview-row" wx:if="{{unpaidAmount}}">
+          <text class="preview-label">剩余未付：</text>
+          <text class="preview-unpaid">¥{{unpaidAmount}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="footer-buttons">
+    <button class="btn btn-outline" bindtap="onPreview">预览</button>
+    <button class="btn btn-primary" bindtap="onConfirm">确认付款</button>
+  </view>
+</view>

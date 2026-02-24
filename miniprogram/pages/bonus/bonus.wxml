@@ -1,0 +1,56 @@
+<!-- 分红页面 -->
+<view class="container">
+  <!-- 项目列表 -->
+  <view class="project-list">
+    <block wx:if="{{projects.length > 0}}">
+      <view
+        class="project-card"
+        wx:for="{{projects}}"
+        wx:key="projectId"
+      >
+        <view class="card-header">
+          <view class="project-name">{{item.projectName}}</view>
+          <view class="project-date">{{item.createDate}}</view>
+        </view>
+
+        <view class="card-body">
+          <view class="info-row">
+            <text class="info-label">工头：</text>
+            <text class="info-value">{{item.foreman}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">车次：</text>
+            <text class="info-value primary-color">{{item.totalTrucks || 0}}</text>
+            <text class="info-unit">次</text>
+          </view>
+        </view>
+
+        <view class="card-actions">
+          <view
+            class="action-btn action-foreman"
+            bindtap="goToForemanBonus"
+            data-project-id="{{item.projectId}}"
+          >
+            <text class="action-label">工头</text>
+            <view class="status-tag {{item.foremanStatus === '已支付' ? 'paid' : 'unpaid'}}" wx:if="{{item.foremanStatus}}">
+              {{item.foremanStatus}}
+            </view>
+          </view>
+          <view
+            class="action-btn action-driver"
+            bindtap="goToDriverBonus"
+            data-project-id="{{item.projectId}}"
+          >
+            <text class="action-label">司机</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">💰</text>
+      <text>暂无分红项目</text>
+      <text class="hint">在项目页面创建项目后自动同步</text>
+    </view>
+  </view>
+</view>

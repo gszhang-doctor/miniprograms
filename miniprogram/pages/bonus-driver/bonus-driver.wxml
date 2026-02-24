@@ -1,0 +1,43 @@
+<!-- 司机分红页面 -->
+<view class="container">
+  <!-- 项目信息卡片 -->
+  <view class="info-card">
+    <view class="info-title">{{projectName}}</view>
+  </view>
+
+  <!-- 司机列表 -->
+  <view class="driver-list">
+    <block wx:if="{{trucks.length > 0}}">
+      <view
+        class="driver-card"
+        wx:for="{{trucks}}"
+        wx:key="driver"
+        bindtap="viewDriverDetail"
+        data-driver="{{item.driver}}"
+      >
+        <view class="driver-header">
+          <text class="driver-name">{{item.driver}}</text>
+          <text class="driver-count">{{item.count}}次</text>
+        </view>
+        <view class="driver-stats">
+          <view class="stat-item">
+            <text class="stat-label">总方数</text>
+            <text class="stat-value">{{item.totalQuantity}}</text>
+            <text class="stat-unit">方</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-label">总金额</text>
+            <text class="stat-value primary-color">{{item.totalAmount}}</text>
+            <text class="stat-unit">元</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">🚚</text>
+      <text>暂无司机记录</text>
+      <text class="hint">在项目页面添加车次记录后显示</text>
+    </view>
+  </view>
+</view>

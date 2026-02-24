@@ -1,0 +1,335 @@
+/* 数据汇总页面样式 */
+.container {
+  min-height: 100vh;
+  background-color: #F5F7FA;
+  padding-bottom: 120rpx;
+}
+
+/* 顶部 */
+.header {
+  background: linear-gradient(135deg, #722ED1 0%, #9254DE 100%);
+  padding: 40rpx 32rpx;
+  color: #FFFFFF;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+/* 统计卡片 */
+.stats-card {
+  background-color: #FFFFFF;
+  margin: 24rpx 32rpx;
+  padding: 32rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.stats-title {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 24rpx;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24rpx;
+}
+
+.stats-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24rpx 16rpx;
+  background: linear-gradient(135deg, #F5F7FA 0%, #FFFFFF 100%);
+  border-radius: 12rpx;
+}
+
+.stats-icon {
+  font-size: 48rpx;
+  margin-bottom: 12rpx;
+}
+
+.stats-value {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.stats-label {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.primary-color {
+  color: #1890FF;
+}
+
+.warning-color {
+  color: #FAAD14;
+}
+
+.success-color {
+  color: #52C41A;
+}
+
+/* 卡片 */
+.card {
+  background-color: #FFFFFF;
+  margin: 0 32rpx 24rpx;
+  padding: 32rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+  padding-bottom: 24rpx;
+  border-bottom: 2rpx solid #F0F0F0;
+}
+
+.title-text {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.title-icon {
+  font-size: 32rpx;
+}
+
+/* 每日统计列表 */
+.daily-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.daily-item {
+  padding: 24rpx;
+  background-color: #F5F7FA;
+  border-radius: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.daily-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.daily-date {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.daily-count {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.daily-body {
+  display: flex;
+  gap: 32rpx;
+}
+
+.daily-row {
+  display: flex;
+  align-items: center;
+}
+
+.daily-label {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.daily-value {
+  font-size: 26rpx;
+  color: #333;
+  margin-left: 8rpx;
+}
+
+.daily-amount {
+  font-size: 28rpx;
+  color: #FF4D4F;
+  font-weight: bold;
+  margin-left: 8rpx;
+}
+
+/* 财务统计 */
+.finance-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.finance-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx;
+  background: linear-gradient(135deg, #F5F7FA 0%, #FFFFFF 100%);
+  border-radius: 12rpx;
+}
+
+.finance-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.finance-value {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.finance-divider {
+  height: 2rpx;
+  background-color: #F0F0F0;
+}
+
+/* 付款方式分布 */
+.payment-methods {
+  margin-top: 16rpx;
+}
+
+.methods-title {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 16rpx;
+}
+
+.method-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  background-color: #F5F7FA;
+  border-radius: 8rpx;
+  margin-bottom: 12rpx;
+}
+
+.method-info {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.method-icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+}
+
+.method-name {
+  font-size: 26rpx;
+  color: #333;
+}
+
+.method-amount {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  margin-right: 24rpx;
+}
+
+.method-percent {
+  font-size: 24rpx;
+  color: #1890FF;
+  font-weight: bold;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  padding: 0 32rpx;
+  margin-top: 32rpx;
+}
+
+/* 司机统计列表 */
+.driver-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.driver-item {
+  padding: 24rpx;
+  background-color: #F5F7FA;
+  border-radius: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.driver-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.driver-name {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.driver-count {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.driver-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.driver-row {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+}
+
+.driver-label {
+  color: #999;
+  min-width: 140rpx;
+}
+
+.driver-value {
+  color: #333;
+}
+
+.driver-unit {
+  color: #999;
+  margin-left: 4rpx;
+}
+
+.driver-amount {
+  color: #FF4D4F;
+  font-weight: bold;
+  margin-left: 4rpx;
+}
+
+/* 最后一次司机信息 */
+.last-driver-info {
+  background-color: #F6FFED;
+  border-radius: 8rpx;
+  padding: 16rpx 24rpx;
+  margin-bottom: 24rpx;
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+}
+
+.last-driver-label {
+  color: #52C41A;
+  margin-right: 8rpx;
+}
+
+.last-driver-name {
+  color: #333;
+  font-weight: bold;
+}

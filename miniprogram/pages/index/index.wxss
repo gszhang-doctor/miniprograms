@@ -1,0 +1,294 @@
+/* 主页面样式 */
+.container {
+  min-height: 100vh;
+  background-color: #F5F7FA;
+  padding-bottom: 120rpx;
+}
+
+/* 顶部标题区域 */
+.header {
+  background: linear-gradient(135deg, #1890FF 0%, #40A9FF 100%);
+  padding: 60rpx 32rpx 40rpx;
+  color: #FFFFFF;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.header-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.header-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8rpx 16rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8rpx;
+  transition: all 0.3s;
+}
+
+.header-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(0.95);
+}
+
+.header-btn-icon {
+  font-size: 28rpx;
+}
+
+.header-btn-text {
+  font-size: 20rpx;
+  margin-top: 4rpx;
+}
+
+/* 筛选栏 */
+.filter-bar {
+  background-color: #FFFFFF;
+  padding: 24rpx 32rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+  margin-bottom: 24rpx;
+  gap: 16rpx;
+}
+
+.filter-item {
+  flex: 1;
+  max-width: calc(25% - 12rpx);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx;
+  border-radius: 8rpx;
+  background-color: #F5F7FA;
+}
+
+.filter-item:active {
+  background-color: #F5F7FA;
+}
+
+.filter-label {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+
+.filter-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+/* 项目列表 */
+.project-list {
+  padding: 0 32rpx;
+}
+
+.project-card {
+  background-color: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+  transition: all 0.3s;
+}
+
+.project-card:active {
+  transform: translateY(-2rpx);
+  box-shadow: 0 4rpx 16rpx rgba(24, 144, 255, 0.2);
+}
+
+/* 卡片头部 */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+  padding-bottom: 24rpx;
+  border-bottom: 2rpx solid #F0F0F0;
+}
+
+.project-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  flex: 1;
+}
+
+.project-date {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 卡片主体 */
+.card-body {
+  margin-bottom: 24rpx;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+  font-size: 28rpx;
+}
+
+.info-label {
+  color: #666;
+  min-width: 120rpx;
+}
+
+.info-value {
+  color: #333;
+  font-weight: 500;
+  flex: 1;
+}
+
+.info-unit {
+  color: #999;
+  font-size: 24rpx;
+  margin-left: 8rpx;
+}
+
+/* 联系按钮 */
+.call-btn {
+  margin-left: 16rpx;
+  padding: 8rpx 16rpx;
+  background: linear-gradient(135deg, #52C41A 0%, #73D13D 100%);
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.call-btn:active {
+  transform: scale(0.95);
+}
+
+.call-icon {
+  font-size: 32rpx;
+  color: #FFFFFF;
+}
+
+/* 卡片底部 */
+.card-footer {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 24rpx;
+  border-top: 2rpx solid #F0F0F0;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 0;
+  color: #999;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 24rpx;
+  opacity: 0.3;
+}
+
+.hint {
+  font-size: 24rpx;
+  margin-top: 8rpx;
+}
+
+/* 按钮样式 */
+.btn {
+  border: none;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  padding: 12rpx 24rpx;
+  height: 64rpx;
+  line-height: 40rpx;
+}
+
+.btn-small {
+  padding: 8rpx 16rpx;
+  font-size: 24rpx;
+  height: 56rpx;
+  line-height: 40rpx;
+}
+
+.btn-primary {
+  background-color: #1890FF;
+  color: white;
+}
+
+.btn-warning {
+  background-color: #FA8C16;
+  color: white;
+}
+
+.btn-danger {
+  background-color: #FF4D4F;
+  color: white;
+}
+
+/* 标签样式 */
+.tag {
+  padding: 4rpx 12rpx;
+  border-radius: 4rpx;
+  font-size: 22rpx;
+}
+
+.tag-success {
+  background-color: #F6FFED;
+  color: #52C41A;
+  border: 1rpx solid #B7EB8F;
+}
+
+.tag-warning {
+  background-color: #FFF7E6;
+  color: #FA8C16;
+  border: 1rpx solid #FFD591;
+}
+
+/* 颜色辅助类 */
+.primary-color {
+  color: #1890FF;
+}
+
+.warning-color {
+  color: #FA8C16;
+}
+
+/* 悬浮按钮 */
+.fab {
+  position: fixed;
+  right: 32rpx;
+  bottom: 32rpx;
+  width: 112rpx;
+  height: 112rpx;
+  background: linear-gradient(135deg, #1890FF 0%, #40A9FF 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(24, 144, 255, 0.4);
+  z-index: 100;
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+.fab-icon {
+  font-size: 64rpx;
+  color: #FFFFFF;
+  font-weight: 300;
+}

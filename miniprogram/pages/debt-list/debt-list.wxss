@@ -1,0 +1,310 @@
+/* 欠账列表页面样式 */
+.container {
+  min-height: 100vh;
+  background-color: #F5F7FA;
+  padding-bottom: 120rpx;
+}
+
+.header {
+  background: linear-gradient(135deg, #1890FF 0%, #096DD9 100%);
+  padding: 40rpx 32rpx;
+  color: #fff;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.stats-card {
+  background: #fff;
+  margin: 24rpx;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.stats-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 24rpx;
+}
+
+.stats-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.stats-item {
+  flex: 1;
+  text-align: center;
+}
+
+.stats-label {
+  display: block;
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+
+.stats-value {
+  display: block;
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.stats-divider {
+  width: 1rpx;
+  height: 60rpx;
+  background: #E8E8E8;
+}
+
+.debt-list {
+  padding: 0 24rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin: 32rpx 0 24rpx;
+}
+
+.debt-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.debt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #F0F0F0;
+  margin-bottom: 16rpx;
+}
+
+.debt-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.call-btn {
+  padding: 8rpx 16rpx;
+  background: linear-gradient(135deg, #52C41A 0%, #73D13D 100%);
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.call-btn:active {
+  transform: scale(0.95);
+}
+
+.call-icon {
+  font-size: 32rpx;
+  color: #FFFFFF;
+}
+
+.debt-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.debt-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 4rpx;
+}
+
+.debt-phone {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.debt-status {
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+}
+
+.debt-status.settled {
+  background: #F6FFED;
+  color: #52C41A;
+}
+
+.debt-status.unsettled {
+  background: #FFF7E6;
+  color: #FA8C16;
+}
+
+.debt-body {
+  margin-bottom: 16rpx;
+}
+
+.debt-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.debt-label {
+  font-size: 28rpx;
+  color: #666;
+  width: 140rpx;
+  flex-shrink: 0;
+}
+
+.debt-value {
+  font-size: 28rpx;
+  color: #333;
+  flex: 1;
+}
+
+.debt-amount {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.debt-remark {
+  font-size: 28rpx;
+  color: #666;
+  flex: 1;
+}
+
+.settled-time {
+  font-size: 24rpx;
+  color: #52C41A;
+}
+
+.debt-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #F0F0F0;
+}
+
+.debt-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.debt-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.btn-small {
+  padding: 8rpx 24rpx;
+  font-size: 24rpx;
+  height: 56rpx;
+  line-height: 40rpx;
+}
+
+.btn-disabled {
+  opacity: 0.6;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 24rpx;
+  opacity: 0.3;
+}
+
+.empty-state text:last-child {
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* 悬浮按钮 */
+.fab {
+  position: fixed;
+  bottom: 60rpx;
+  right: 32rpx;
+  width: 112rpx;
+  height: 112rpx;
+  background: linear-gradient(135deg, #1890FF 0%, #096DD9 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(24, 144, 255, 0.4);
+  z-index: 100;
+}
+
+.fab-icon {
+  font-size: 56rpx;
+  color: #fff;
+  font-weight: 300;
+}
+
+.btn-delete {
+  background-color: #FF4D4F;
+  color: white;
+  border: none;
+}
+
+.btn {
+  border-radius: 8rpx;
+}
+
+.btn-primary {
+  background-color: #1890FF;
+  color: white;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 2rpx solid #1890FF;
+  color: #1890FF;
+}
+
+.btn-success {
+  background-color: #52C41A;
+  color: white;
+}
+
+.primary-color {
+  color: #1890FF;
+}
+
+.success-color {
+  color: #52C41A;
+}
+
+.warning-color {
+  color: #FA8C16;
+}
+
+.hint {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+
+.success-color {
+  color: #52C41A;
+}
+
+.warning-color {
+  color: #FA8C16;
+}

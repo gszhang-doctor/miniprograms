@@ -1,0 +1,21 @@
+<!-- 预览弹窗组件 -->
+<view class="preview-mask" wx:if="{{visible}}" bindtap="onMaskTap">
+  <view class="preview-container" catchtap="onContainerTap">
+    <view class="preview-header">
+      <text class="preview-title">{{title}}</text>
+      <view class="preview-close" bindtap="onClose">×</view>
+    </view>
+    
+    <view class="preview-body">
+      <view class="preview-item" wx:for="{{items}}" wx:key="label">
+        <text class="preview-label">{{item.label}}：</text>
+        <text class="preview-value">{{item.value}}</text>
+      </view>
+    </view>
+    
+    <view class="preview-footer">
+      <button class="btn btn-outline" bindtap="onCancel">返回修改</button>
+      <button class="btn btn-primary" bindtap="onConfirm">确认无误</button>
+    </view>
+  </view>
+</view>

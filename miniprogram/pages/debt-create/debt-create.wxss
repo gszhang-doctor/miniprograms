@@ -1,0 +1,148 @@
+/* 新增欠账页面样式 */
+.container {
+  min-height: 100vh;
+  background-color: #F5F7FA;
+}
+
+.form-container {
+  padding: 24rpx;
+}
+
+.form-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 32rpx;
+}
+
+.form-item {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.form-label {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.form-label.required::before {
+  content: '*';
+  color: #FF4D4F;
+  margin-right: 4rpx;
+}
+
+.form-input {
+  width: 100%;
+  height: 88rpx;
+  font-size: 30rpx;
+  color: #333;
+  border: 1rpx solid #E8E8E8;
+  border-radius: 8rpx;
+  padding: 0 24rpx;
+  box-sizing: border-box;
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 160rpx;
+  font-size: 30rpx;
+  color: #333;
+  border: 1rpx solid #E8E8E8;
+  border-radius: 8rpx;
+  padding: 16rpx 24rpx;
+  box-sizing: border-box;
+}
+
+.picker-input {
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1rpx solid #E8E8E8;
+  border-radius: 8rpx;
+  padding: 0 24rpx;
+}
+
+.picker-text {
+  font-size: 30rpx;
+  color: #333;
+}
+
+.picker-arrow {
+  font-size: 40rpx;
+  color: #999;
+}
+
+.preset-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.preset-option {
+  padding: 12rpx 24rpx;
+  background: #F5F7FA;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  color: #666;
+  border: 1rpx solid #E8E8E8;
+  transition: all 0.3s;
+}
+
+.preset-option.active {
+  background: #E6F7FF;
+  color: #1890FF;
+  border-color: #1890FF;
+}
+
+.footer-buttons {
+  display: flex;
+  gap: 24rpx;
+  padding: 24rpx;
+  background: #fff;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+.footer-buttons .btn {
+  flex: 1;
+}
+
+.btn {
+  border: none;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+}
+
+.btn-primary {
+  background: #1890FF;
+  color: #fff;
+}
+
+.btn-outline {
+  background: #fff;
+  color: #1890FF;
+  border: 1rpx solid #1890FF;
+}
+
+.btn-success {
+  background: #52C41A;
+  color: #fff;
+}
+
+.btn-small {
+  padding: 8rpx 24rpx;
+  font-size: 24rpx;
+  height: 56rpx;
+  line-height: 40rpx;
+}

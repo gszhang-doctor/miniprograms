@@ -1,0 +1,171 @@
+/* 创建项目页面样式 */
+.container {
+  min-height: 100vh;
+  background-color: #F5F7FA;
+  padding-bottom: 120rpx;
+}
+
+.form-container {
+  background-color: #FFFFFF;
+  margin: 24rpx 32rpx;
+  padding: 32rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.form-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 40rpx;
+  padding-bottom: 24rpx;
+  border-bottom: 2rpx solid #F0F0F0;
+}
+
+/* 表单项 */
+.form-item {
+  margin-bottom: 40rpx;
+}
+
+.form-label {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.form-label.required::after {
+  content: '*';
+  color: #FF4D4F;
+  margin-left: 8rpx;
+}
+
+.form-input {
+  width: 100%;
+  height: 80rpx;
+  padding: 0 24rpx;
+  background-color: #F5F7FA;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  border: 2rpx solid transparent;
+}
+
+.form-input:focus {
+  background-color: #FFFFFF;
+  border-color: #1890FF;
+}
+
+/* 预设列表 */
+.preset-list {
+  margin-top: 16rpx;
+  max-height: 300rpx;
+  overflow-y: auto;
+}
+
+.preset-item {
+  position: relative;
+  padding: 20rpx 24rpx;
+  background-color: #F5F7FA;
+  border-radius: 8rpx;
+  margin-bottom: 12rpx;
+  font-size: 26rpx;
+  color: #666;
+  transition: all 0.3s;
+}
+
+.preset-item:active {
+  background-color: #E6F7FF;
+  color: #1890FF;
+}
+
+.preset-item.shaking {
+  animation: shake 0.5s ease-in-out infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4rpx) rotate(-1deg); }
+  75% { transform: translateX(4rpx) rotate(1deg); }
+}
+
+/* 选择器输入框 */
+.picker-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80rpx;
+  padding: 0 24rpx;
+  background-color: #F5F7FA;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+
+.picker-text {
+  color: #333;
+}
+
+.picker-text.placeholder {
+  color: #999;
+}
+
+.picker-arrow {
+  font-size: 40rpx;
+  color: #999;
+  transform: rotate(90deg);
+}
+
+/* 文本域 */
+.form-textarea {
+  width: 100%;
+  min-height: 160rpx;
+  padding: 16rpx 24rpx;
+  background-color: #F5F7FA;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  border: 2rpx solid transparent;
+}
+
+.form-textarea:focus {
+  background-color: #FFFFFF;
+  border-color: #1890FF;
+}
+
+/* 底部按钮 */
+.footer-buttons {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24rpx 32rpx;
+  background-color: #FFFFFF;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.footer-buttons .btn {
+  width: 48%;
+  height: 88rpx;
+  border-radius: 12rpx;
+  font-size: 32rpx;
+}
+
+.btn-delete-x {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  width: 32rpx;
+  height: 32rpx;
+  background-color: #FF4D4F;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: bold;
+  box-shadow: 0 2rpx 8rpx rgba(255, 77, 79, 0.4);
+  z-index: 10;
+}

@@ -1,0 +1,49 @@
+<!-- 工头分红页面 -->
+<view class="container">
+  <!-- 项目信息卡片 -->
+  <view class="info-card">
+    <view class="info-title">{{projectName}}</view>
+    <view class="info-detail">工头：{{foreman}}</view>
+  </view>
+
+  <!-- 记录列表 -->
+  <view class="record-list">
+    <block wx:if="{{records.length > 0}}">
+      <view
+        class="record-card"
+        wx:for="{{records}}"
+        wx:key="index"
+      >
+        <view class="record-main" bindtap="viewRecord" data-index="{{index}}">
+          <view class="record-amount">
+            <text class="amount-label">金额</text>
+            <text class="amount-value">{{item.amount || '未填写'}}</text>
+            <text class="amount-unit" wx:if="{{item.amount}}">元</text>
+          </view>
+          <view class="record-status">
+            <view class="tag {{item.paid ? 'tag-success' : 'tag-warning'}}">
+              {{item.paid ? '已支付' : '未支付'}}
+            </view>
+          </view>
+        </view>
+        <view class="record-footer">
+          <text class="record-creator">创建者：{{item.creator || '未知'}}</text>
+          <view class="delete-btn" bindtap="deleteRecord" data-index="{{index}}">
+            <text class="delete-icon">🗑️</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">💰</text>
+      <text>暂无分红记录</text>
+      <text class="hint">点击右下角 + 新建分红记录</text>
+    </view>
+  </view>
+
+  <!-- 悬浮创建按钮 -->
+  <view class="fab" bindtap="createBonusRecord">
+    <text class="fab-icon">+</text>
+  </view>
+</view>

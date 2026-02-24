@@ -1,0 +1,319 @@
+/* 付款列表页面样式 */
+.container {
+  min-height: 100vh;
+  background-color: #F5F7FA;
+  padding-bottom: 160rpx;
+}
+
+/* 顶部 */
+.header {
+  background: linear-gradient(135deg, #52C41A 0%, #73D13D 100%);
+  padding: 40rpx 32rpx;
+  color: #FFFFFF;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+/* 统计卡片 */
+.stats-card {
+  background-color: #FFFFFF;
+  margin: 24rpx 32rpx;
+  padding: 32rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.stats-title {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 24rpx;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.stats-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.stats-label {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+
+.stats-value {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.stats-divider {
+  width: 2rpx;
+  height: 60rpx;
+  background-color: #F0F0F0;
+}
+
+.primary-color {
+  color: #1890FF;
+}
+
+.success-color {
+  color: #52C41A;
+}
+
+.warning-color {
+  color: #FAAD14;
+}
+
+/* 进度条 */
+.progress-bar {
+  width: 100%;
+  height: 8rpx;
+  background-color: #F0F0F0;
+  border-radius: 4rpx;
+  margin-top: 24rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #52C41A 0%, #73D13D 100%);
+  border-radius: 4rpx;
+  transition: width 0.3s;
+}
+
+/* 付款列表 */
+.payment-list {
+  padding: 0 32rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 24rpx;
+  padding-left: 16rpx;
+  border-left: 8rpx solid #52C41A;
+}
+
+.payment-card {
+  background-color: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+/* 付款头部 */
+.payment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+  padding-bottom: 24rpx;
+  border-bottom: 2rpx solid #F0F0F0;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+}
+
+.method-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.method-text {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.payment-date {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 付款主体 */
+.payment-body {
+  margin-bottom: 24rpx;
+}
+
+.amount-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.amount-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.amount-value {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.remark-row {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 2rpx dashed #F0F0F0;
+}
+
+.remark-label {
+  font-size: 24rpx;
+  color: #999;
+  min-width: 80rpx;
+}
+
+.remark-text {
+  flex: 1;
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 付款图片 */
+.payment-images {
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 2rpx dashed #F0F0F0;
+}
+
+.images-label {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 12rpx;
+}
+
+.images-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.images-wrapper {
+  display: inline-flex;
+  gap: 12rpx;
+}
+
+.payment-image {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 8rpx;
+  flex-shrink: 0;
+}
+
+/* 付款底部 */
+.payment-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24rpx;
+  border-top: 2rpx solid #F0F0F0;
+}
+
+.payment-time {
+  font-size: 22rpx;
+  color: #CCC;
+}
+
+.btn-delete {
+  padding: 12rpx 32rpx;
+  background-color: #FF4D4F;
+  color: #FFFFFF;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  border: none;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 0;
+  color: #999;
+}
+
+.empty-state image {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 24rpx;
+  opacity: 0.5;
+}
+
+/* 悬浮按钮 */
+.fab {
+  position: fixed;
+  right: 32rpx;
+  bottom: 32rpx;
+  width: 112rpx;
+  height: 112rpx;
+  background: linear-gradient(135deg, #52C41A 0%, #73D13D 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(82, 196, 26, 0.4);
+  z-index: 100;
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+.fab-icon {
+  font-size: 64rpx;
+  color: #FFFFFF;
+  font-weight: 300;
+}
+
+/* 悬浮按钮组 */
+.fab-group {
+  position: fixed;
+  right: 32rpx;
+  bottom: 32rpx;
+  display: flex;
+  gap: 16rpx;
+  z-index: 100;
+}
+
+.fab {
+  width: 112rpx;
+  height: 112rpx;
+  background: linear-gradient(135deg, #52C41A 0%, #73D13D 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(82, 196, 26, 0.4);
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+.fab-debt {
+  background: linear-gradient(135deg, #FA8C16 0%, #FFA940 100%);
+  box-shadow: 0 8rpx 24rpx rgba(250, 140, 22, 0.4);
+}
+
+.fab-icon {
+  font-size: 64rpx;
+  color: #FFFFFF;
+  font-weight: 300;
+}
+.hint { font-size: 24rpx; color: #999; margin-top: 8rpx; } .btn { border-radius: 8rpx; } .btn-primary { background-color: #1890FF; color: white; } .btn-outline { background-color: transparent; border: 2rpx solid #1890FF; color: #1890FF; } .btn-success { background-color: #52C41A; color: white; } .btn-edit { background-color: #FA8C16; color: white; } .btn-delete { background-color: #FF4D4F; color: white; } .primary-color { color: #1890FF; } .success-color { color: #52C41A; } .warning-color { color: #FA8C16; }

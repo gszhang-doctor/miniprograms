@@ -1,0 +1,130 @@
+/* 司机分红详情页面样式 */
+.container {
+  min-height: 100vh;
+  background-color: #F5F7FA;
+  padding-bottom: 20rpx;
+}
+
+.info-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  margin: 20rpx 24rpx;
+  padding: 32rpx;
+  border-radius: 16rpx;
+  color: #FFFFFF;
+}
+
+.info-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 16rpx;
+}
+
+.info-detail {
+  font-size: 28rpx;
+  opacity: 0.9;
+}
+
+.stats-card {
+  background-color: #FFFFFF;
+  margin: 0 24rpx 20rpx;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  display: flex;
+  justify-content: space-around;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+
+.stat-value {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.stat-unit {
+  font-size: 22rpx;
+  color: #999;
+  margin-left: 4rpx;
+}
+
+.stat-divider {
+  width: 2rpx;
+  background-color: #F0F0F0;
+}
+
+.primary-color {
+  color: #1890FF;
+}
+
+.record-list {
+  padding: 0 24rpx;
+}
+
+.list-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.record-card {
+  background-color: #FFFFFF;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.record-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.record-row:last-child {
+  margin-bottom: 0;
+}
+
+.record-label {
+  font-size: 24rpx;
+  color: #999;
+  min-width: 120rpx;
+}
+
+.record-value {
+  font-size: 28rpx;
+  color: #333;
+  flex: 1;
+}
+
+.record-unit {
+  font-size: 22rpx;
+  color: #999;
+  margin-left: 8rpx;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 0;
+  color: #999;
+}
+
+.empty-icon {
+  font-size: 100rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.3;
+}

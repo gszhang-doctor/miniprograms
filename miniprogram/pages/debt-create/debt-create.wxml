@@ -1,0 +1,126 @@
+<!-- 新增欠账页面 -->
+<view class="container">
+  <view class="form-container">
+    <view class="form-title">登记欠账信息</view>
+
+    <!-- 欠账人姓名 -->
+    <view class="form-item">
+      <label class="form-label required">欠账人姓名</label>
+      <input 
+        class="form-input" 
+        placeholder="请输入欠账人姓名"
+        value="{{name}}"
+        bindinput="onNameInput"
+      />
+    </view>
+
+    <!-- 联系电话 -->
+    <view class="form-item">
+      <label class="form-label required">联系电话</label>
+      <input 
+        class="form-input" 
+        type="number"
+        placeholder="请输入联系电话"
+        value="{{phone}}"
+        bindinput="onPhoneInput"
+        maxlength="11"
+      />
+    </view>
+
+    <!-- 欠账金额 -->
+    <view class="form-item">
+      <label class="form-label required">欠账金额（元）</label>
+      <input 
+        class="form-input" 
+        type="digit"
+        placeholder="请输入欠账金额"
+        value="{{amount}}"
+        bindinput="onAmountInput"
+      />
+    </view>
+
+    <!-- 欠账日期 -->
+    <view class="form-item">
+      <label class="form-label required">欠账日期</label>
+      <picker 
+        mode="date" 
+        value="{{debtDate}}" 
+        start="{{minDate}}"
+        end="{{maxDate}}"
+        bindchange="onDebtDateChange"
+      >
+        <view class="picker-input">
+          <text class="picker-text">{{debtDate || '请选择欠账日期'}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 结清期限 -->
+    <view class="form-item">
+      <label class="form-label">结清期限</label>
+      <!-- 快捷选择 -->
+      <view class="preset-options">
+        <view 
+          class="preset-option {{settleDateType === 'quick' && settleDate === '下次结清' ? 'active' : ''}}" 
+          bindtap="selectQuickSettle"
+        >
+          下次结清
+        </view>
+        <view 
+          class="preset-option {{settleDateType === 'week' ? 'active' : ''}}" 
+          bindtap="selectWeekSettle"
+        >
+          一周内
+        </view>
+        <view 
+          class="preset-option {{settleDateType === 'month' ? 'active' : ''}}" 
+          bindtap="selectMonthSettle"
+        >
+          一个月内
+        </view>
+      </view>
+      <!-- 日期选择 -->
+      <picker 
+        mode="date" 
+        value="{{settleDate}}" 
+        start="{{debtDate}}"
+        bindchange="onSettleDateChange"
+      >
+        <view class="picker-input">
+          <text class="picker-text">{{settleDate || '选择具体日期'}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 站内负责人 -->
+    <view class="form-item">
+      <label class="form-label">站内负责人</label>
+      <input 
+        class="form-input" 
+        placeholder="请输入站内负责人姓名"
+        value="{{manager}}"
+        bindinput="onManagerInput"
+      />
+    </view>
+
+    <!-- 备注 -->
+    <view class="form-item">
+      <label class="form-label">备注（选填）</label>
+      <textarea 
+        class="form-textarea" 
+        placeholder="请输入备注信息"
+        value="{{remarks}}"
+        bindinput="onRemarksInput"
+        maxlength="100"
+      />
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="footer-buttons">
+    <button class="btn btn-outline" bindtap="onCancel">取消</button>
+    <button class="btn btn-primary" bindtap="onConfirm">提交</button>
+  </view>
+</view>

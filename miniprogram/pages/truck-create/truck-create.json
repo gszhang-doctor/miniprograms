@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "登记车次",
+  "backgroundColor": "#F5F7FA",
+  "usingComponents": {
+    "preview-modal": "/components/preview-modal/preview-modal"
+  }
+}

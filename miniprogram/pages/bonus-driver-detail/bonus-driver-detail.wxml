@@ -1,0 +1,68 @@
+<!-- 司机分红详情页面 -->
+<view class="container">
+  <!-- 项目信息卡片 -->
+  <view class="info-card">
+    <view class="info-title">{{projectName}}</view>
+    <view class="info-detail">司机：{{driver}}</view>
+  </view>
+
+  <!-- 统计卡片 -->
+  <view class="stats-card">
+    <view class="stat-item">
+      <text class="stat-label">车次</text>
+      <text class="stat-value">{{summary.count}}</text>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item">
+      <text class="stat-label">总方数</text>
+      <text class="stat-value">{{summary.totalQuantity}}</text>
+      <text class="stat-unit">方</text>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item">
+      <text class="stat-label">总金额</text>
+      <text class="stat-value primary-color">{{summary.totalAmount}}</text>
+      <text class="stat-unit">元</text>
+    </view>
+  </view>
+
+  <!-- 记录列表 -->
+  <view class="record-list">
+    <view class="list-title">车次记录</view>
+    <block wx:if="{{records.length > 0}}">
+      <view
+        class="record-card"
+        wx:for="{{records}}"
+        wx:key="truckId"
+      >
+        <view class="record-row">
+          <text class="record-label">车次</text>
+          <text class="record-value">{{item.truckIndex}}</text>
+        </view>
+        <view class="record-row">
+          <text class="record-label">车牌号</text>
+          <text class="record-value">{{item.plate}}</text>
+        </view>
+        <view class="record-row">
+          <text class="record-label">方数</text>
+          <text class="record-value">{{item.quantity}}</text>
+          <text class="record-unit">方</text>
+        </view>
+        <view class="record-row">
+          <text class="record-label">金额</text>
+          <text class="record-value primary-color">{{item.totalPrice}}</text>
+          <text class="record-unit">元</text>
+        </view>
+        <view class="record-row">
+          <text class="record-label">创建者</text>
+          <text class="record-value">{{item.creator || '未知'}}</text>
+        </view>
+      </view>
+    </block>
+
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">📋</text>
+      <text>暂无记录</text>
+    </view>
+  </view>
+</view>

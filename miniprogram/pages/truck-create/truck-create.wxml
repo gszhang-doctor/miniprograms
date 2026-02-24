@@ -1,0 +1,456 @@
+<!-- 创建车次页面 -->
+<view class="container">
+  <!-- 预览弹窗 -->
+  <preview-modal 
+    visible="{{previewVisible}}" 
+    title="车次信息预览"
+    items="{{previewItems}}"
+    bind:cancel="onPreviewCancel"
+    bind:confirm="onPreviewConfirm"
+  />
+  
+  <!-- 沿用上次选项弹窗 -->
+  <view class="modal-mask" wx:if="{{showUseLastModal}}">
+    <view class="modal-container">
+      <view class="modal-header">
+        <text class="modal-title">快速创建</text>
+        <view class="modal-close" bindtap="closeUseLastModal">×</view>
+      </view>
+      <view class="modal-body">
+        <text class="modal-desc">是否沿用上次的选项？</text>
+        <view class="last-info">
+          <view class="last-item">
+            <text class="last-label">司机：</text>
+            <text class="last-value">{{lastTruck.driverName}}</text>
+          </view>
+          <view class="last-item">
+            <text class="last-label">车牌：</text>
+            <text class="last-value">{{lastTruck.licensePlate}}</text>
+          </view>
+          <view class="last-item">
+            <text class="last-label">施工部位：</text>
+            <text class="last-value">{{lastTruck.constructionSite}}</text>
+          </view>
+          <view class="last-item">
+            <text class="last-label">强度等级：</text>
+            <text class="last-value">{{lastTruck.strengthGrade}}</text>
+          </view>
+          <view class="last-item">
+            <text class="last-label">单价：</text>
+            <text class="last-value">¥{{lastTruck.unitPrice}}/方</text>
+          </view>
+          <view class="last-item">
+            <text class="last-label">方数：</text>
+            <text class="last-value">{{lastTruck.quantity}}方</text>
+          </view>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button class="btn btn-outline modal-btn" bindtap="closeUseLastModal">不沿用</button>
+        <button class="btn btn-primary modal-btn" bindtap="useLastOptions">沿用</button>
+      </view>
+    </view>
+  </view>
+  
+  <view class="form-container">
+    <view class="form-title">登记车次信息</view>
+
+    <!-- 车次编号（自动生成） -->
+    <view class="form-item">
+      <label class="form-label">车次编号</label>
+      <view class="form-input editable" bindtap="editTruckNo">{{truckNo}}</view>
+    </view>
+
+    <!-- 司机姓名 -->
+    <view class="form-item">
+      <label class="form-label required">司机姓名</label>
+      <input
+        class="form-input"
+        wx:if="{{showCustomDriver}}"
+        placeholder="请输入司机姓名"
+        value="{{driverName}}"
+        bindinput="onDriverNameInput"
+        bindblur="hideCustomDriverInput"
+        focus="{{showCustomDriver}}"
+      />
+      <!-- 预设司机 -->
+      <view class="preset-options" wx:if="{{presetDrivers.length > 0 && !showCustomDriver}}">
+        <view
+          class="preset-option {{driverName === item ? 'active' : ''}} {{showDeletePreset && deleteType === 'driver' && deleteIndex === index ? 'shaking' : ''}}"
+          wx:for="{{presetDrivers}}"
+          wx:key="index"
+          bindtap="selectDriver"
+          bindlongpress="handlePresetLongPress"
+          data-name="{{item}}"
+          data-type="driver"
+          data-index="{{index}}"
+        >
+          {{item}}
+          <view
+            class="btn-delete-x"
+            wx:if="{{showDeletePreset && deleteType === 'driver' && deleteIndex === index}}"
+            bindtap="deletePresetItem"
+            catchtap="deletePresetItem"
+            data-type="driver"
+            data-index="{{index}}"
+          >
+            ×
+          </view>
+        </view>
+        <view
+          class="preset-option custom {{showCustomDriver ? 'active' : ''}}"
+          bindtap="showCustomDriverInput"
+        >
+          自定义
+        </view>
+      </view>
+    </view>
+
+    <!-- 车牌号码 -->
+    <view class="form-item">
+      <label class="form-label required">车牌号码</label>
+      <input
+        class="form-input"
+        wx:if="{{showCustomPlate}}"
+        placeholder="请输入车牌号码"
+        value="{{licensePlate}}"
+        bindinput="onLicensePlateInput"
+        bindblur="hideCustomPlateInput"
+        focus="{{showCustomPlate}}"
+        maxlength="10"
+      />
+      <!-- 预设车牌 -->
+      <view class="preset-options" wx:if="{{presetPlates.length > 0 && !showCustomPlate}}">
+        <view
+          class="preset-option {{licensePlate === item ? 'active' : ''}} {{showDeletePreset && deleteType === 'plate' && deleteIndex === index ? 'shaking' : ''}}"
+          wx:for="{{presetPlates}}"
+          wx:key="index"
+          bindtap="selectPlate"
+          bindlongpress="handlePresetLongPress"
+          data-plate="{{item}}"
+          data-type="plate"
+          data-index="{{index}}"
+        >
+          {{item}}
+          <view
+            class="btn-delete-x"
+            wx:if="{{showDeletePreset && deleteType === 'plate' && deleteIndex === index}}"
+            bindtap="deletePresetItem"
+            catchtap="deletePresetItem"
+            data-type="plate"
+            data-index="{{index}}"
+          >
+            ×
+          </view>
+        </view>
+        <view
+          class="preset-option custom {{showCustomPlate ? 'active' : ''}}"
+          bindtap="showCustomPlateInput"
+        >
+          自定义
+        </view>
+      </view>
+    </view>
+
+    <!-- 施工部位 -->
+    <view class="form-item">
+      <label class="form-label required">施工部位</label>
+      <!-- 预设施工部位 -->
+      <view class="preset-options" wx:if="{{presetSites.length > 0}}">
+        <view
+          class="preset-option {{constructionSite === item ? 'active' : ''}} {{showDeletePreset && deleteType === 'site' && deleteIndex === index ? 'shaking' : ''}}"
+          wx:for="{{presetSites}}"
+          wx:key="index"
+          bindtap="selectSite"
+          bindlongpress="handlePresetLongPress"
+          data-site="{{item}}"
+          data-type="site"
+          data-index="{{index}}"
+        >
+          {{item}}
+          <view
+            class="btn-delete-x"
+            wx:if="{{showDeletePreset && deleteType === 'site' && deleteIndex === index}}"
+            bindtap="deletePresetItem"
+            catchtap="deletePresetItem"
+            data-type="site"
+            data-index="{{index}}"
+          >
+            ×
+          </view>
+        </view>
+        <view
+          class="preset-option custom {{constructionSite && !presetSites.includes(constructionSite) ? 'active' : ''}}"
+          bindtap="showCustomSiteInput"
+        >
+          自定义
+        </view>
+      </view>
+      <!-- 自定义施工部位输入框 -->
+      <input
+        class="form-input"
+        wx:if="{{showCustomSite}}"
+        placeholder="请输入施工部位"
+        value="{{constructionSite}}"
+        bindinput="onSiteInput"
+        bindblur="hideCustomSiteInput"
+        focus="{{showCustomSite}}"
+      />
+    </view>
+
+    <!-- 强度等级 -->
+    <view class="form-item">
+      <label class="form-label required">强度等级</label>
+      <!-- 预设强度等级 -->
+      <view class="preset-options" wx:if="{{strengthGrades.length > 0}}">
+        <view
+          class="preset-option {{gradeIndex >= 0 && strengthGrades[gradeIndex] === item ? 'active' : ''}} {{showDeletePreset && deleteType === 'grade' && deleteIndex === index ? 'shaking' : ''}}"
+          wx:for="{{strengthGrades}}"
+          wx:key="index"
+          bindtap="selectGrade"
+          bindlongpress="handlePresetLongPress"
+          data-grade="{{item}}"
+          data-index="{{index}}"
+          data-type="grade"
+        >
+          {{item}}
+          <view
+            class="btn-delete-x"
+            wx:if="{{showDeletePreset && deleteType === 'grade' && deleteIndex === index}}"
+            bindtap="deletePresetItem"
+            catchtap="deletePresetItem"
+            data-type="grade"
+            data-index="{{index}}"
+          >
+            ×
+          </view>
+        </view>
+        <view
+          class="preset-option custom {{customStrengthGrade ? 'active' : ''}}"
+          bindtap="showCustomGradeInput"
+        >
+          自定义
+        </view>
+      </view>
+      <!-- 自定义强度等级输入框 -->
+      <input
+        class="form-input"
+        wx:if="{{showCustomGrade}}"
+        placeholder="请输入强度等级（如C35）"
+        value="{{customStrengthGrade}}"
+        bindinput="onCustomGradeInput"
+        bindblur="hideCustomGradeInput"
+        focus="{{showCustomGrade}}"
+      />
+    </view>
+
+    <!-- 单价 -->
+    <view class="form-item">
+      <label class="form-label required">单价（元/方）</label>
+      <input
+        class="form-input"
+        wx:if="{{showCustomPrice}}"
+        type="digit"
+        placeholder="请输入单价"
+        value="{{unitPrice}}"
+        bindinput="onUnitPriceInput"
+        bindblur="hideCustomPriceInput"
+        focus="{{showCustomPrice}}"
+      />
+      <!-- 预设单价 -->
+      <view class="preset-options" wx:if="{{presetPrices.length > 0 && !showCustomPrice}}">
+        <view
+          class="preset-option {{unitPrice == item ? 'active' : ''}} {{showDeletePreset && deleteType === 'price' && deleteIndex === index ? 'shaking' : ''}}"
+          wx:for="{{presetPrices}}"
+          wx:key="index"
+          bindtap="selectPrice"
+          bindlongpress="handlePresetLongPress"
+          data-price="{{item}}"
+          data-type="price"
+          data-index="{{index}}"
+        >
+          ¥{{item}}/方
+          <view
+            class="btn-delete-x"
+            wx:if="{{showDeletePreset && deleteType === 'price' && deleteIndex === index}}"
+            bindtap="deletePresetItem"
+            catchtap="deletePresetItem"
+            data-type="price"
+            data-index="{{index}}"
+          >
+            ×
+          </view>
+        </view>
+        <view
+          class="preset-option custom {{showCustomPrice ? 'active' : ''}}"
+          bindtap="showCustomPriceInput"
+        >
+          自定义
+        </view>
+      </view>
+    </view>
+
+    <!-- 方数 -->
+    <view class="form-item">
+      <label class="form-label required">方数</label>
+      <input
+        class="form-input"
+        wx:if="{{showCustomQuantity}}"
+        type="digit"
+        placeholder="请输入方数"
+        value="{{quantity}}"
+        bindinput="onQuantityInput"
+        bindblur="hideCustomQuantityInput"
+        focus="{{showCustomQuantity}}"
+      />
+      <!-- 预设方数 -->
+      <view class="preset-options" wx:if="{{presetQuantities.length > 0 && !showCustomQuantity}}">
+        <view
+          class="preset-option {{quantity == item ? 'active' : ''}} {{showDeletePreset && deleteType === 'quantity' && deleteIndex === index ? 'shaking' : ''}}"
+          wx:for="{{presetQuantities}}"
+          wx:key="index"
+          bindtap="selectQuantity"
+          bindlongpress="handlePresetLongPress"
+          data-quantity="{{item}}"
+          data-type="quantity"
+          data-index="{{index}}"
+        >
+          {{item}}方
+          <view
+            class="btn-delete-x"
+            wx:if="{{showDeletePreset && deleteType === 'quantity' && deleteIndex === index}}"
+            bindtap="deletePresetItem"
+            catchtap="deletePresetItem"
+            data-type="quantity"
+            data-index="{{index}}"
+          >
+            ×
+          </view>
+        </view>
+        <view
+          class="preset-option custom {{showCustomQuantity ? 'active' : ''}}"
+          bindtap="showCustomQuantityInput"
+        >
+          自定义
+        </view>
+      </view>
+    </view>
+
+    <!-- 泵车司机 -->
+    <view class="form-item">
+      <label class="form-label">泵车司机</label>
+      <input
+        class="form-input"
+        wx:if="{{showCustomPumpDriver}}"
+        placeholder="请输入泵车司机姓名"
+        value="{{pumpDriver}}"
+        bindinput="onPumpDriverInput"
+        bindblur="hideCustomPumpDriverInput"
+        focus="{{showCustomPumpDriver}}"
+      />
+      <!-- 随机泵车司机 -->
+      <view class="preset-options" wx:if="{{presetPumpDrivers.length > 0 && !showCustomPumpDriver}}">
+        <view
+          class="preset-option {{pumpDriver === item ? 'active' : ''}} {{showDeletePreset && deleteType === 'pumpDriver' && deleteIndex === index ? 'shaking' : ''}}"
+          wx:for="{{presetPumpDrivers}}"
+          wx:key="index"
+          bindtap="selectPumpDriver"
+          bindlongpress="handlePresetLongPress"
+          data-driver="{{item}}"
+          data-type="pumpDriver"
+          data-index="{{index}}"
+        >
+          {{item}}
+          <view
+            class="btn-delete-x"
+            wx:if="{{showDeletePreset && deleteType === 'pumpDriver' && deleteIndex === index}}"
+            bindtap="deletePresetItem"
+            catchtap="deletePresetItem"
+            data-type="pumpDriver"
+            data-index="{{index}}"
+          >
+            ×
+          </view>
+        </view>
+        <view
+          class="preset-option custom {{showCustomPumpDriver ? 'active' : ''}}"
+          bindtap="showCustomPumpDriverInput"
+        >
+          自定义
+        </view>
+      </view>
+    </view>
+
+    <!-- 泵车费用 -->
+    <view class="form-item">
+      <label class="form-label">泵车费用（元）</label>
+      <input
+        class="form-input"
+        type="digit"
+        placeholder="默认为0，请输入泵车费用"
+        value="{{pumpCost}}"
+        bindinput="onPumpCostInput"
+      />
+      <!-- 预设泵车费用 -->
+      <view class="preset-options" wx:if="{{presetPumpCosts.length > 0}}">
+        <view
+          class="preset-option {{pumpCost == item ? 'active' : ''}} {{showDeletePreset && deleteType === 'pumpCost' && deleteIndex === index ? 'shaking' : ''}}"
+          wx:for="{{presetPumpCosts}}"
+          wx:key="index"
+          bindtap="selectPumpCost"
+          bindlongpress="handlePresetLongPress"
+          data-cost="{{item}}"
+          data-type="pumpCost"
+          data-index="{{index}}"
+        >
+          ¥{{item}}
+          <view
+            class="btn-delete-x"
+            wx:if="{{showDeletePreset && deleteType === 'pumpCost' && deleteIndex === index}}"
+            bindtap="deletePresetItem"
+            catchtap="deletePresetItem"
+            data-type="pumpCost"
+            data-index="{{index}}"
+          >
+            ×
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 备注 -->
+    <view class="form-item">
+      <label class="form-label">备注（选填）</label>
+      <textarea 
+        class="form-textarea" 
+        placeholder="请输入备注信息"
+        value="{{remarks}}"
+        bindinput="onRemarksInput"
+        maxlength="100"
+      />
+    </view>
+
+    <!-- 金额预览 -->
+    <view class="amount-preview" wx:if="{{previewAmount}}">
+      <view class="preview-row">
+        <text class="preview-label">混凝土金额：</text>
+        <text class="preview-value">¥{{concreteAmount}}</text>
+      </view>
+      <view class="preview-row" wx:if="{{pumpCost > 0}}">
+        <text class="preview-label">泵车费用：</text>
+        <text class="preview-value">¥{{pumpCost}}</text>
+      </view>
+      <view class="preview-divider"></view>
+      <view class="preview-row total">
+        <text class="preview-label">总金额：</text>
+        <text class="preview-amount">¥{{previewAmount}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="footer-buttons">
+    <button class="btn btn-outline" bindtap="onPreview">预览</button>
+    <button class="btn btn-primary" bindtap="onConfirm">提交</button>
+  </view>
+</view>

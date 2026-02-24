@@ -1,0 +1,128 @@
+<!-- 欠账列表页面 -->
+<view class="container">
+  <!-- 顶部信息 -->
+  <view class="header">
+    <view class="header-title">欠账管理</view>
+  </view>
+
+  <!-- 欠账统计 -->
+  <view class="stats-card" wx:if="{{stats}}">
+    <view class="stats-title">欠账统计</view>
+    <view class="stats-row">
+      <view class="stats-item">
+        <text class="stats-label">总欠账</text>
+        <text class="stats-value primary-color">¥{{stats.totalDebt}}</text>
+      </view>
+      <view class="stats-divider"></view>
+      <view class="stats-item">
+        <text class="stats-label">已结清</text>
+        <text class="stats-value success-color">¥{{stats.settledDebt}}</text>
+      </view>
+    </view>
+    <view class="stats-row" style="margin-top: 32rpx;">
+      <view class="stats-item">
+        <text class="stats-label">未结清</text>
+        <text class="stats-value warning-color">¥{{stats.unsettledDebt}}</text>
+      </view>
+      <view class="stats-divider"></view>
+      <view class="stats-item">
+        <text class="stats-label">笔数</text>
+        <text class="stats-value">{{stats.totalCount}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 欠账记录列表 -->
+  <view class="debt-list">
+    <view class="section-title">欠账记录</view>
+    
+    <block wx:if="{{debts.length > 0}}">
+      <view 
+        class="debt-card" 
+        wx:for="{{debts}}" 
+        wx:key="debtId"
+      >
+        <view class="debt-header">
+          <view class="debt-info">
+            <text class="debt-name">{{item.name}}</text>
+            <text class="debt-phone">{{item.phone}}</text>
+          </view>
+          <view class="debt-header-actions">
+            <view
+              class="call-btn"
+              catchtap="callDebtor"
+              data-phone="{{item.phone}}"
+              data-name="{{item.name}}"
+              wx:if="{{item.phone}}"
+            >
+              <text class="call-icon">📞</text>
+            </view>
+            <view class="debt-status {{item.isSettled ? 'settled' : 'unsettled'}}">
+              {{item.isSettled ? '已结清' : '未结清'}}
+            </view>
+          </view>
+        </view>
+        
+        <view class="debt-body">
+          <view class="debt-row">
+            <text class="debt-label">欠账日期：</text>
+            <text class="debt-value">{{item.debtDate}}</text>
+          </view>
+          <view class="debt-row">
+            <text class="debt-label">欠账金额：</text>
+            <text class="debt-amount warning-color">¥{{item.amount}}</text>
+          </view>
+          <view class="debt-row">
+            <text class="debt-label">结清期限：</text>
+            <text class="debt-value">{{item.settleDate || '待定'}}</text>
+          </view>
+          <view class="debt-row">
+            <text class="debt-label">站内负责人：</text>
+            <text class="debt-value">{{item.manager || '未填写'}}</text>
+          </view>
+          <view class="debt-row" wx:if="{{item.remarks}}">
+            <text class="debt-label">备注：</text>
+            <text class="debt-remark">{{item.remarks}}</text>
+          </view>
+          <view class="debt-row" wx:if="{{item.isSettled}}">
+            <text class="debt-label">结清时间：</text>
+            <text class="debt-value settled-time">{{item.settledDate}}</text>
+          </view>
+        </view>
+        
+        <view class="debt-footer">
+          <text class="debt-time">记录时间：{{item.createTime}}</text>
+          <view class="debt-actions">
+            <button 
+              class="btn btn-small {{item.isSettled ? 'btn-disabled' : 'btn-success'}}" 
+              bindtap="settleDebt" 
+              data-debt-id="{{item.debtId}}"
+              disabled="{{item.isSettled}}"
+            >
+              {{item.isSettled ? '已结清' : '标记结清'}}
+            </button>
+            <button 
+              class="btn-delete btn-small" 
+              bindtap="deleteDebt" 
+              data-debt-id="{{item.debtId}}"
+            >
+              删除
+            </button>
+          </view>
+        </view>
+      </view>
+    </block>
+    
+    <!-- 空状态 -->
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">📝</text>
+      <text>暂无欠账记录</text>
+      <text class="hint">点击右下角 + 新建欠账记录</text>
+    </view>
+  </view>
+
+  <!-- 添加欠账按钮 -->
+  <view class="fab" bindtap="addDebt">
+    <text class="fab-icon">+</text>
+  </view>
+</view>

@@ -1,0 +1,53 @@
+<!-- 我的页面 -->
+<view class="container">
+  <!-- 头部卡片 -->
+  <view class="header-card">
+    <view class="avatar">👤</view>
+    <block wx:if="{{!isEditing}}">
+      <view class="user-info" bindtap="startEdit">
+        <view class="user-label">我的姓名</view>
+        <view class="user-name {{userName ? '' : 'placeholder'}}">
+          {{userName || '点击设置姓名'}}
+        </view>
+        <view class="edit-hint">点击修改</view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="user-info editing">
+        <view class="user-label">我的姓名</view>
+        <input
+          class="name-input"
+          type="text"
+          placeholder="请输入姓名"
+          value="{{userName}}"
+          bindinput="inputName"
+          focus="{{isEditing}}"
+        />
+        <view class="edit-actions">
+          <view class="action-btn cancel" bindtap="cancelEdit">取消</view>
+          <view class="action-btn save" bindtap="saveName">保存</view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 功能列表 -->
+  <view class="function-list">
+    <view class="function-item" bindtap="viewProjectStats">
+      <view class="function-icon">📊</view>
+      <view class="function-text">项目统计</view>
+      <view class="function-arrow">›</view>
+    </view>
+    <view class="function-item" bindtap="viewBonusStats">
+      <view class="function-icon">💰</view>
+      <view class="function-text">分红统计</view>
+      <view class="function-arrow">›</view>
+    </view>
+  </view>
+
+  <!-- 提示信息 -->
+  <view class="tips">
+    <view class="tip-item">• 设置姓名后，新建记录会自动关联创建者</view>
+    <view class="tip-item">• 所有数据支持云端同步，多端登录即可查看</view>
+  </view>
+</view>

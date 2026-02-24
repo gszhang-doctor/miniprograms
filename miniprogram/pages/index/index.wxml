@@ -1,0 +1,142 @@
+<!-- 主页面 -->
+<view class="container">
+  <!-- 顶部标题区域 -->
+  <view class="header">
+    <text class="title">施工项目管理系统</text>
+    <view class="header-actions">
+      <view class="header-btn" bindtap="exportData">
+        <text class="header-btn-icon">📤</text>
+        <text class="header-btn-text">导出</text>
+      </view>
+      <view class="header-btn" bindtap="importData">
+        <text class="header-btn-icon">📁</text>
+        <text class="header-btn-text">导入</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 筛选栏 -->
+  <view class="filter-bar">
+    <view class="filter-item" bindtap="showDateFilter">
+      <text class="filter-label">日期筛选</text>
+      <text class="filter-value">{{filterDate || '全部'}}</text>
+    </view>
+    <view class="filter-item" bindtap="showProjectFilter">
+      <text class="filter-label">项目筛选</text>
+      <text class="filter-value">{{filterProject || '全部'}}</text>
+    </view>
+    <view class="filter-item" bindtap="showForemanFilter">
+      <text class="filter-label">工头筛选</text>
+      <text class="filter-value">{{filterForeman || '全部'}}</text>
+    </view>
+    <view class="filter-item" bindtap="showPaymentFilter">
+      <text class="filter-label">支付筛选</text>
+      <text class="filter-value">{{filterPayment || '全部'}}</text>
+    </view>
+  </view>
+
+  <!-- 项目列表 -->
+  <view class="project-list">
+    <block wx:if="{{filteredProjects.length > 0}}">
+      <view
+        class="project-card"
+        wx:for="{{filteredProjects}}"
+        wx:key="projectId"
+        bindtap="viewProjectDetail"
+        bindlongpress="handleCardLongPress"
+        data-project="{{item}}"
+      >
+        <view class="card-header">
+          <view class="project-name">{{item.projectName}}</view>
+          <view class="project-date">{{item.createDate}}</view>
+        </view>
+
+        <view class="card-body">
+          <view class="info-row">
+            <text class="info-label">工头：</text>
+            <text class="info-value">{{item.foreman}}</text>
+            <view
+              class="call-btn"
+              catchtap="callForeman"
+              data-phone="{{item.foremanPhone}}"
+              wx:if="{{item.foremanPhone}}"
+            >
+              <text class="call-icon">📞</text>
+            </view>
+          </view>
+          <view class="info-row">
+            <text class="info-label">车次：</text>
+            <text class="info-value primary-color">{{item.totalTrucks || 0}}</text>
+            <text class="info-unit">次</text>
+          </view>
+          <view class="info-row" wx:if="{{item.stats}}">
+            <text class="info-label">总方数：</text>
+            <text class="info-value">{{item.stats.totalQuantity}}</text>
+            <text class="info-unit">方</text>
+          </view>
+          <view class="info-row" wx:if="{{item.stats && item.stats.concreteAmount > 0}}">
+            <text class="info-label">混凝土费用：</text>
+            <text class="info-value">{{item.stats.concreteAmount}}</text>
+            <text class="info-unit">元</text>
+          </view>
+          <view class="info-row" wx:if="{{item.stats && item.stats.pumpCost > 0}}">
+            <text class="info-label">泵车费用：</text>
+            <text class="info-value warning-color">{{item.stats.pumpCost}}</text>
+            <text class="info-unit">元</text>
+          </view>
+          <view class="info-row" wx:if="{{item.stats}}">
+            <text class="info-label">总金额：</text>
+            <text class="info-value">{{item.stats.totalAmount}}</text>
+            <text class="info-unit">元</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">付款状态：</text>
+            <view class="tag {{item.stats && item.stats.isPaidOff ? 'tag-success' : 'tag-warning'}}">
+              {{item.stats && item.stats.isPaidOff ? '已付清' : '未付清'}}
+            </view>
+          </view>
+          <view class="info-row" wx:if="{{item.creator}}">
+            <text class="info-label">创建者：</text>
+            <text class="info-value">{{item.creator}}</text>
+          </view>
+        </view>
+
+        <view class="card-footer">
+          <button
+            class="btn btn-warning btn-small"
+            catchtap="goToPayment"
+            data-project-id="{{item.projectId}}"
+          >
+            付款
+          </button>
+          <button
+            class="btn btn-danger btn-small"
+            catchtap="goToDebt"
+            data-project-id="{{item.projectId}}"
+          >
+            欠账
+          </button>
+          <button
+            class="btn btn-primary btn-small"
+            catchtap="goToSummary"
+            data-project-id="{{item.projectId}}"
+          >
+            汇总
+          </button>
+        </view>
+      </view>
+    </block>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">📋</text>
+      <text>暂无项目</text>
+      <text class="hint">点击右下角 + 创建新项目</text>
+    </view>
+  </view>
+
+  <!-- 悬浮创建按钮 -->
+  <view class="fab" bindtap="createProject">
+    <text class="fab-icon">+</text>
+  </view>
+</view>

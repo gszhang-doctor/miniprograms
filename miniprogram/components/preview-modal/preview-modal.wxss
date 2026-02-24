@@ -1,0 +1,122 @@
+/* 预览弹窗样式 */
+.preview-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.preview-container {
+  width: 600rpx;
+  background-color: #FFFFFF;
+  border-radius: 24rpx;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100rpx);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 弹窗头部 */
+.preview-header {
+  padding: 32rpx;
+  background: linear-gradient(135deg, #1890FF 0%, #40A9FF 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.preview-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+}
+
+.preview-close {
+  width: 56rpx;
+  height: 56rpx;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+/* 弹窗主体 */
+.preview-body {
+  padding: 32rpx;
+  max-height: 800rpx;
+  overflow-y: auto;
+}
+
+.preview-item {
+  display: flex;
+  padding: 24rpx 0;
+  border-bottom: 2rpx solid #F5F7FA;
+}
+
+.preview-item:last-child {
+  border-bottom: none;
+}
+
+.preview-label {
+  min-width: 160rpx;
+  font-size: 28rpx;
+  color: #666;
+  line-height: 44rpx;
+}
+
+.preview-value {
+  flex: 1;
+  font-size: 32rpx;
+  color: #333;
+  font-weight: bold;
+  line-height: 44rpx;
+  text-align: right;
+}
+
+/* 弹窗底部 */
+.preview-footer {
+  padding: 24rpx 32rpx 32rpx;
+  display: flex;
+  gap: 24rpx;
+  border-top: 2rpx solid #F5F7FA;
+}
+
+.btn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 12rpx;
+  font-size: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.btn-outline {
+  background-color: #F5F7FA;
+  color: #666;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #1890FF 0%, #40A9FF 100%);
+  color: #FFFFFF;
+}

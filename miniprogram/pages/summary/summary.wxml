@@ -1,0 +1,154 @@
+<!-- 数据汇总页面 -->
+<wxs module="utils">
+var getMethodIcon = function(method) {
+  var icons = {
+    '现金': '💵',
+    '微信': '💬',
+    '支付宝': '💳',
+    '银行转账': '🏦'
+  };
+  return icons[method] || '💰';
+};
+module.exports.getMethodIcon = getMethodIcon;
+</wxs>
+
+<view class="container">
+  <!-- 顶部 -->
+  <view class="header">
+    <view class="header-title">数据汇总</view>
+  </view>
+
+  <!-- 基础统计 -->
+  <view class="stats-card" wx:if="{{stats}}">
+    <view class="stats-title">基础统计</view>
+    <view class="stats-grid">
+      <view class="stats-item">
+        <text class="stats-icon">📊</text>
+        <text class="stats-value">{{stats.totalTrucks}}</text>
+        <text class="stats-label">车次总数</text>
+      </view>
+      <view class="stats-item">
+        <text class="stats-icon">📦</text>
+        <text class="stats-value primary-color">{{stats.totalQuantity}}</text>
+        <text class="stats-label">总方数</text>
+      </view>
+      <view class="stats-item">
+        <text class="stats-icon">💰</text>
+        <text class="stats-value warning-color">{{stats.totalAmount}}</text>
+        <text class="stats-label">总金额（元）</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 时间维度统计 -->
+  <view class="card" wx:if="{{dailyStats && dailyStats.length > 0}}">
+    <view class="card-title">
+      <text class="title-text">每日统计</text>
+      <text class="title-icon">📅</text>
+    </view>
+
+    <view class="daily-list">
+      <view class="daily-item" wx:for="{{dailyStats}}" wx:key="date">
+        <view class="daily-header">
+          <text class="daily-date">{{item.date}}</text>
+          <text class="daily-count">{{item.count}}车次</text>
+        </view>
+        <view class="daily-body">
+          <view class="daily-row">
+            <text class="daily-label">方数：</text>
+            <text class="daily-value">{{item.quantity}}</text>
+          </view>
+          <view class="daily-row">
+            <text class="daily-label">金额：</text>
+            <text class="daily-amount">¥{{item.amount}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+    <!-- 司机维度统计 -->
+    <view class="card" wx:if="{{driverStats && driverStats.length > 0}}">
+      <view class="card-title">
+        <text class="title-text">司机统计</text>
+        <text class="title-icon">👨‍✈️</text>
+      </view>
+
+      <!-- 最后一次车次的司机 -->
+      <view class="last-driver-info" wx:if="{{lastDriver}}">
+        <text class="last-driver-label">最后一次车次司机：</text>
+        <text class="last-driver-name">{{lastDriver}}</text>
+      </view>
+
+      <view class="driver-list">
+        <view class="driver-item" wx:for="{{driverStats}}" wx:key="name">
+          <view class="driver-header">
+            <text class="driver-name">{{item.name}}</text>
+            <text class="driver-count">{{item.count}}车次</text>
+          </view>
+          <view class="driver-body">
+            <view class="driver-row">
+              <text class="driver-label">累积方数：</text>
+              <text class="driver-value primary-color">{{item.quantity}}</text>
+              <text class="driver-unit">方</text>
+            </view>
+            <view class="driver-row">
+              <text class="driver-label">累积金额：</text>
+              <text class="driver-amount">¥{{item.amount}}</text>
+            </view>
+            <view class="driver-row" wx:if="{{item.pumpDriver}}">
+              <text class="driver-label">泵车司机：</text>
+              <text class="driver-value">{{item.pumpDriver}}</text>
+            </view>
+            <view class="driver-row" wx:if="{{item.pumpCost > 0}}">
+              <text class="driver-label">泵车费用：</text>
+              <text class="driver-amount warning-color">¥{{item.pumpCost}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+  <!-- 财务统计 -->
+  <view class="card" wx:if="{{stats}}">
+    <view class="card-title">
+      <text class="title-text">财务统计</text>
+      <text class="title-icon">💳</text>
+    </view>
+
+    <view class="finance-stats">
+      <view class="finance-row">
+        <text class="finance-label">已付款金额</text>
+        <text class="finance-value success-color">¥{{stats.paidAmount}}</text>
+      </view>
+      <view class="finance-row">
+        <text class="finance-label">未付款金额</text>
+        <text class="finance-value warning-color">¥{{stats.unpaidAmount}}</text>
+      </view>
+      <view class="finance-divider"></view>
+
+      <!-- 付款方式分布 -->
+      <view class="payment-methods" wx:if="{{paymentMethodList.length > 0}}">
+        <view class="methods-title">付款方式分布</view>
+        <view class="method-item" wx:for="{{paymentMethodList}}" wx:key="method">
+          <view class="method-info">
+            <text class="method-icon">{{utils.getMethodIcon(item.method)}}</text>
+            <text class="method-name">{{item.method}}</text>
+          </view>
+          <view class="method-amount">¥{{item.amount}}</view>
+          <view class="method-percent">{{item.percent}}%</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button class="btn btn-primary" bindtap="exportData" style="width: 100%;">
+      📤 导出数据
+    </button>
+    <button class="btn btn-outline" bindtap="shareData" style="width: 100%; margin-top: 16rpx;">
+      📤 分享报告
+    </button>
+  </view>
+</view>

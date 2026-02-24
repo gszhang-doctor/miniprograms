@@ -1,0 +1,147 @@
+/* 工头分红创建页面样式 */
+.container {
+  min-height: 100vh;
+  background-color: #F5F7FA;
+  padding: 24rpx;
+}
+
+.form-card {
+  background-color: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 32rpx 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.form-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 32rpx;
+  text-align: center;
+}
+
+.form-item {
+  margin-bottom: 32rpx;
+}
+
+.form-label {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 16rpx;
+}
+
+.form-value {
+  padding: 20rpx 24rpx;
+  background-color: #F5F7FA;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: #666;
+}
+
+.form-input-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 24rpx;
+  background-color: #F5F7FA;
+  border-radius: 8rpx;
+}
+
+.form-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.form-unit {
+  font-size: 24rpx;
+  color: #999;
+  margin-left: 8rpx;
+}
+
+.radio-group {
+  display: flex;
+  gap: 24rpx;
+}
+
+.radio-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 20rpx 24rpx;
+  background-color: #F5F7FA;
+  border-radius: 8rpx;
+  border: 2rpx solid transparent;
+}
+
+.radio-item.active {
+  border-color: #667eea;
+  background-color: rgba(102, 126, 234, 0.05);
+}
+
+.radio-icon {
+  width: 32rpx;
+  height: 32rpx;
+  border: 3rpx solid #D9D9D9;
+  border-radius: 50%;
+  margin-right: 12rpx;
+  position: relative;
+}
+
+.radio-icon.checked {
+  border-color: #667eea;
+  background-color: #667eea;
+}
+
+.radio-icon.checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12rpx;
+  height: 12rpx;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+}
+
+.radio-text {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.btn-group {
+  margin-top: 40rpx;
+  display: flex;
+  gap: 20rpx;
+}
+
+.btn {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 28rpx;
+  border: none;
+  border-radius: 12rpx;
+  font-weight: 500;
+}
+
+.btn-preview {
+  background-color: #FFFFFF;
+  color: #667eea;
+  border: 2rpx solid #667eea;
+}
+
+.btn-preview:active {
+  opacity: 0.8;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #FFFFFF;
+}
+
+.btn-save:active {
+  opacity: 0.9;
+}
