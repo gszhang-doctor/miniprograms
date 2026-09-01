@@ -87,9 +87,31 @@ Page({
 
     // 为每个项目计算统计数据
     const projectsWithStats = projects.map(project => {
+      // 特别检查高井培华项目
+      if (project.projectId === 'project_1772859240727_744') {
+        console.log('=== 页面加载时高井培华项目检查 ===');
+        console.log('项目ID:', project.projectId);
+        console.log('项目名称:', project.projectName);
+        console.log('项目存储的车次数量:', project.totalTrucks);
+
+        // 重新计算车次数量
+        const trucks = app.getTrucks(project.projectId);
+        console.log('重新计算的车次数量:', trucks.length);
+        console.log('车次详情:', trucks.map(t => ({truckId: t.truckId, driverName: t.driverName})));
+      }
+
       const stats = app.calculateProjectStats(project.projectId);
+
+      // 确保使用重新计算的统计数据，而不是本地存储的字段
       return {
         ...project,
+        totalTrucks: stats.totalTrucks,  // 强制使用重新计算的结果
+        totalQuantity: stats.totalQuantity,
+        totalAmount: stats.totalAmount,
+        concreteAmount: stats.concreteAmount,
+        pumpCost: stats.pumpCost,
+        paidAmount: stats.paidAmount,
+        unpaidAmount: stats.unpaidAmount,
         stats
       };
     });
@@ -328,6 +350,53 @@ Page({
   },
 
   // 导出数据为Excel
+  exportCsv() {
+    const projects = app.getProjects();
+    const trucks = wx.getStorageSync('trucks') || [];
+    const payments = wx.getStorageSync('payments') || [];
+    const debts = wx.getStorageSync('debts') || [];
+    if (!projects.length && !trucks.length && !payments.length && !debts.length) {
+      showToast('暂无数据可导出');
+      return;
+    }
+
+    const escape = value => {
+      const text = value === undefined || value === null ? '' : String(value);
+      return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    };
+    const rows = [['数据类型', '项目名称', '日期/时间', '车次编号', '姓名', '电话', '方数', '单价', '混凝土费用', '泵车司机', '泵车费用', '金额', '状态', '施工部位', '强度等级', '负责人', '备注', '创建者']];
+    const projectMap = {};
+    projects.forEach(project => {
+      projectMap[project.projectId] = project;
+      rows.push(['项目', project.projectName, project.createDate, '', project.foreman, project.foremanPhone, '', '', '', '', '', '', '', '', '', '', project.remarks || '', project.creator || '']);
+    });
+    trucks.forEach(truck => {
+      const project = projectMap[truck.projectId] || {};
+      const concrete = (parseFloat(truck.quantity) || 0) * (parseFloat(truck.unitPrice) || 0);
+      rows.push(['车次', project.projectName || '', truck.createTime || '', truck.truckNo || '', truck.driverName || '', truck.licensePlate || '', truck.quantity || '', truck.unitPrice || '', concrete.toFixed(2), truck.pumpDriver || '', truck.pumpCost || 0, (concrete + (parseFloat(truck.pumpCost) || 0)).toFixed(2), '', truck.constructionSite || '', truck.strengthGrade || '', '', truck.remarks || '', truck.creator || '']);
+    });
+    payments.forEach(payment => {
+      const project = projectMap[payment.projectId] || {};
+      rows.push(['付款', project.projectName || '', payment.paymentDate || payment.createTime || '', '', '', '', '', '', '', '', '', payment.amount || 0, payment.paymentMethod || '', '', '', '', payment.remarks || '', payment.creator || '']);
+    });
+    debts.forEach(debt => {
+      const project = projectMap[debt.projectId] || {};
+      rows.push(['欠账', project.projectName || '', debt.debtDate || debt.createTime || '', '', debt.name || '', debt.phone || '', '', '', '', '', '', debt.amount || 0, debt.isSettled ? '已结清' : '未结清', '', '', debt.manager || '', debt.remarks || '', debt.creator || '']);
+    });
+    const csv = '\ufeff' + rows.map(row => row.map(escape).join(',')).join('\n');
+    const fileName = `施工项目数据_${formatDate(new Date(), 'YYYYMMDD_HHmmss')}.csv`;
+    try {
+      const filePath = `${wx.env.USER_DATA_PATH}/${fileName}`;
+      wx.getFileSystemManager().writeFileSync(filePath, csv, 'utf8');
+      wx.openDocument({ filePath, fileType: 'csv', showMenu: true,
+        success: () => showToast('CSV导出成功', 'success'),
+        fail: () => wx.setClipboardData({ data: csv, success: () => showToast('CSV已复制到剪贴板', 'success') })
+      });
+    } catch (error) {
+      wx.setClipboardData({ data: csv, success: () => showToast('CSV已复制到剪贴板', 'success') });
+    }
+  },
+
   exportData() {
     const projects = app.getProjects();
     if (projects.length === 0) {

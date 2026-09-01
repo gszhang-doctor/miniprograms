@@ -76,6 +76,10 @@ module.exports.getMethodIcon = getMethodIcon;
             <text class="remark-label">备注：</text>
             <text class="remark-text">{{item.remarks}}</text>
           </view>
+          <view class="remark-row" wx:if="{{item.creator}}">
+            <text class="remark-label">创建者：</text>
+            <text class="remark-text">{{item.creator}}</text>
+          </view>
           <!-- 显示图片 -->
           <view class="payment-images" wx:if="{{item.images && item.images.length > 0}}">
             <view class="images-label">凭证图片：</view>

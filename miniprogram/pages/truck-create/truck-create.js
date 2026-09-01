@@ -42,7 +42,8 @@ Page({
     showCustomPlate: false,
     showCustomPrice: false,
     showCustomQuantity: false,
-    showCustomPumpDriver: false
+    showCustomPumpDriver: false,
+    showCustomPumpCost: false
   },
 
   onLoad(options) {
@@ -141,25 +142,30 @@ Page({
     this.calculatePreviewAmount();
   },
 
-  // 加载历史数据
+  // 加载历史数据（跨工程复用）
   loadHistoryData() {
-    const projectTrucks = app.getTrucks(this.data.projectId);
+    // 获取所有项目的车次数据，实现跨工程复用
+    const allTrucks = app.getTrucks(); // 不传参数则获取所有项目的车次
 
     // 提取历史数据
-    const driverNames = [...new Set(projectTrucks.map(t => t.driverName))];
-    const licensePlates = [...new Set(projectTrucks.map(t => t.licensePlate))];
-    const sites = [...new Set(projectTrucks.map(t => t.constructionSite))];
-    const prices = [...new Set(projectTrucks.map(t => t.unitPrice))];
-    const quantities = [...new Set(projectTrucks.map(t => t.quantity))];
-    const pumpDrivers = [...new Set(projectTrucks.map(t => t.pumpDriver).filter(d => d))];
+    const driverNames = [...new Set(allTrucks.map(t => t.driverName))];
+    const licensePlates = [...new Set(allTrucks.map(t => t.licensePlate))];
+    const sites = [...new Set(allTrucks.map(t => t.constructionSite))];
+    const prices = [...new Set(allTrucks.map(t => t.unitPrice))];
+    const quantities = [...new Set(allTrucks.map(t => t.quantity))];
+    const pumpDrivers = [...new Set(allTrucks.map(t => t.pumpDriver).filter(d => d))];
+    const grades = [...new Set(allTrucks.map(t => t.strengthGrade).filter(g => g))];
 
     // 合并预设和历史数据
-    const allDrivers = [...new Set([...this.data.presetDrivers, ...driverNames])];
-    const allPlates = [...new Set([...this.data.presetPlates, ...licensePlates])];
-    const allSites = [...new Set([...this.data.presetSites, ...sites])];
-    const allPrices = [...new Set([...this.data.presetPrices, ...prices])];
-    const allQuantities = [...new Set([...this.data.presetQuantities, ...quantities])];
-    const allPumpDrivers = [...new Set([...this.data.presetPumpDrivers, ...pumpDrivers])];
+    const pumpCosts = [...new Set(allTrucks.map(t => t.pumpCost).filter(v => v !== undefined && v !== null))];
+    const allDrivers = app.getPresetList('driver', this.data.presetDrivers, driverNames);
+    const allPlates = app.getPresetList('plate', this.data.presetPlates, licensePlates);
+    const allSites = app.getPresetList('site', this.data.presetSites, sites);
+    const allPrices = app.getPresetList('price', this.data.presetPrices, prices);
+    const allQuantities = app.getPresetList('quantity', this.data.presetQuantities, quantities);
+    const allPumpDrivers = app.getPresetList('pumpDriver', this.data.presetPumpDrivers, pumpDrivers);
+    const allPumpCosts = app.getPresetList('pumpCost', this.data.presetPumpCosts, pumpCosts);
+    const allGrades = app.getPresetList('grade', this.data.strengthGrades, grades);
 
     this.setData({
       presetDrivers: allDrivers,
@@ -167,7 +173,9 @@ Page({
       presetSites: allSites,
       presetPrices: allPrices,
       presetQuantities: allQuantities,
-      presetPumpDrivers: allPumpDrivers
+      presetPumpDrivers: allPumpDrivers,
+      presetPumpCosts: allPumpCosts,
+      strengthGrades: allGrades
     });
   },
 
@@ -376,6 +384,21 @@ Page({
     this.calculatePreviewAmount();
   },
 
+  showCustomPumpCostInput() {
+    this.setData({ showCustomPumpCost: true, pumpCost: '' });
+  },
+
+  hideCustomPumpCostInput() {
+    this.setData({ showCustomPumpCost: false });
+  },
+
+  // 两个快捷随机按钮用于现场测试
+  randomPumpDriver(e) {
+    const index = Number(e.currentTarget.dataset.index) || 0;
+    const list = this.data.presetPumpDrivers.length ? this.data.presetPumpDrivers : ['小王', '李梦圆', '刘辉'];
+    this.setData({ pumpDriver: list[index % list.length], showCustomPumpDriver: false });
+  },
+
   // 泵车司机输入
   onPumpDriverInput(e) {
     this.setData({ pumpDriver: e.detail.value });
@@ -505,6 +528,16 @@ Page({
       updateTime: new Date().toISOString()
     };
 
+    // 本次自定义值下次可直接复用
+    app.addPresetValue('driver', truck.driverName);
+    app.addPresetValue('plate', truck.licensePlate);
+    app.addPresetValue('site', truck.constructionSite);
+    app.addPresetValue('price', truck.unitPrice);
+    app.addPresetValue('quantity', truck.quantity);
+    app.addPresetValue('grade', truck.strengthGrade);
+    app.addPresetValue('pumpDriver', truck.pumpDriver);
+    app.addPresetValue('pumpCost', truck.pumpCost);
+
     // 保存车次
     app.saveTruck(truck);
 
@@ -590,6 +623,7 @@ Page({
           if (key) {
             const list = [...this.data[key]];
             list.splice(index, 1);
+            app.removePresetValue(type, this.data[key][index]);
             this.setData({
               [key]: list,
               showDeletePreset: false,

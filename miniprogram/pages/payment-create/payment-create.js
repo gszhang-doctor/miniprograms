@@ -234,7 +234,9 @@ Page({
       amount: parseFloat(this.data.amount),
       remarks: this.data.remarks,
       images: this.data.images,  // 保存图片路径
-      createTime: formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss')
+      createTime: formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss'),
+      creator: app.getUserName() || '',
+      updateTime: new Date().toISOString()
     };
 
     // 保存付款记录

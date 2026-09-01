@@ -23,6 +23,16 @@ Page({
     this.loadPayments();
   },
 
+  // 下拉刷新
+  async onPullDownRefresh() {
+    try {
+      await app.syncFromCloud(true);
+      this.loadPayments();
+    } finally {
+      wx.stopPullDownRefresh();
+    }
+  },
+
   // 加载付款记录
   loadPayments() {
     const payments = app.getPayments(this.data.projectId);

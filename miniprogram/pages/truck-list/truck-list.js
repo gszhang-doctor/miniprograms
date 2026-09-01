@@ -25,48 +25,37 @@ Page({
     this.loadTrucks();
   },
 
+  // 下拉刷新
+  async onPullDownRefresh() {
+    try {
+      // 调用云同步
+      await app.syncFromCloud(true);
+      // 重新加载车次数据
+      this.loadTrucks();
+    } finally {
+      wx.stopPullDownRefresh();
+    }
+  },
+
   // 加载车次列表
   loadTrucks() {
     const trucks = app.getTrucks(this.data.projectId);
-    
+
     // 按时间倒序排列
     trucks.sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
 
-    // 计算统计数据
-    const stats = this.calculateStats(trucks);
+    // 使用 app 的统计方法计算
+    const stats = app.calculateProjectStats(this.data.projectId);
 
     this.setData({
       trucks,
-      stats
+      stats: {
+        totalQuantity: stats.totalQuantity.toFixed(1),
+        concreteAmount: stats.concreteAmount,
+        pumpAmount: stats.pumpCost,
+        totalAmount: stats.totalAmount.toFixed(2)
+      }
     });
-  },
-
-  // 计算统计数据
-  calculateStats(trucks) {
-    let totalQuantity = 0;
-    let totalAmount = 0;
-    let concreteAmount = 0;
-    let pumpAmount = 0;
-
-    trucks.forEach(truck => {
-      totalQuantity += truck.quantity;
-      // 计算每条车次的总金额（混凝土+泵车）
-      const truckConcreteAmount = truck.quantity * truck.unitPrice;
-      const truckPumpCost = truck.pumpCost || 0;
-      const total = truckConcreteAmount + truckPumpCost;
-      truck.amount = total.toFixed(2);
-      truck.concreteAmount = truckConcreteAmount.toFixed(2);
-      totalAmount += total;
-      concreteAmount += truckConcreteAmount;
-      pumpAmount += truckPumpCost;
-    });
-
-    return {
-      totalQuantity: totalQuantity.toFixed(1),
-      concreteAmount: concreteAmount.toFixed(2),
-      pumpAmount: pumpAmount.toFixed(2),
-      totalAmount: totalAmount.toFixed(2)
-    };
   },
 
   // 查看车次详情

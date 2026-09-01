@@ -37,6 +37,16 @@ module.exports.getMethodIcon = getMethodIcon;
         <text class="stats-value warning-color">{{stats.totalAmount}}</text>
         <text class="stats-label">总金额（元）</text>
       </view>
+      <view class="stats-item">
+        <text class="stats-icon">🧱</text>
+        <text class="stats-value">{{stats.concreteAmount}}</text>
+        <text class="stats-label">混凝土费用</text>
+      </view>
+      <view class="stats-item">
+        <text class="stats-icon">🚚</text>
+        <text class="stats-value warning-color">{{stats.pumpCost}}</text>
+        <text class="stats-label">泵车费用</text>
+      </view>
     </view>
   </view>
 

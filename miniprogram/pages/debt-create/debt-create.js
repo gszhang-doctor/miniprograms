@@ -138,7 +138,9 @@ Page({
       manager: this.data.manager || '',
       remarks: this.data.remarks || '',
       isSettled: false,
-      createTime: formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss')
+      createTime: formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss'),
+      creator: app.getUserName() || '',
+      updateTime: new Date().toISOString()
     };
 
     // 保存欠账记录

@@ -23,6 +23,16 @@ Page({
     this.loadDebts();
   },
 
+  // 下拉刷新
+  async onPullDownRefresh() {
+    try {
+      await app.syncFromCloud(true);
+      this.loadDebts();
+    } finally {
+      wx.stopPullDownRefresh();
+    }
+  },
+
   // 加载欠账记录
   loadDebts() {
     const debts = app.getDebts(this.data.projectId);

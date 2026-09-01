@@ -350,6 +350,8 @@
       />
       <!-- 随机泵车司机 -->
       <view class="preset-options" wx:if="{{presetPumpDrivers.length > 0 && !showCustomPumpDriver}}">
+        <view class="preset-option random" bindtap="randomPumpDriver" data-index="0">随机1</view>
+        <view class="preset-option random" bindtap="randomPumpDriver" data-index="1">随机2</view>
         <view
           class="preset-option {{pumpDriver === item ? 'active' : ''}} {{showDeletePreset && deleteType === 'pumpDriver' && deleteIndex === index ? 'shaking' : ''}}"
           wx:for="{{presetPumpDrivers}}"
@@ -414,6 +416,12 @@
           >
             ×
           </view>
+        </view>
+        <view
+          class="preset-option custom {{showCustomPumpCost ? 'active' : ''}}"
+          bindtap="showCustomPumpCostInput"
+        >
+          自定义
         </view>
       </view>
     </view>

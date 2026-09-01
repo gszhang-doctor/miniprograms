@@ -16,22 +16,46 @@ exports.main = async (event, context) => {
     // 创建工作簿
     const workbook = new ExcelJS.Workbook();
 
+    // 记录工作表名称的使用情况，避免重复
+    const usedSheetNames = {};
+
+    // 生成唯一的工作表名称
+    const getUniqueSheetName = (baseName) => {
+      let uniqueName = baseName;
+      let counter = 1;
+
+      while (usedSheetNames[uniqueName]) {
+        uniqueName = `${baseName}_${counter}`;
+        counter++;
+      }
+
+      usedSheetNames[uniqueName] = true;
+      return uniqueName;
+    };
+
     // 创建工作表
     projects.forEach((project, index) => {
+      // 使用项目名称+创建日期作为基础名称，避免不同天同名项目冲突
+      const baseName = project.createDate ? `${project.projectName}_${project.createDate}` : project.projectName;
+
       // 车次工作表
-      const truckSheet = workbook.addWorksheet(`${project.projectName}_车次`);
+      const truckSheetName = getUniqueSheetName(`${baseName}_车次`);
+      const truckSheet = workbook.addWorksheet(truckSheetName);
       setupTruckSheet(truckSheet, project, trucks.filter(t => t.projectId === project.projectId));
 
       // 付款工作表
-      const paymentSheet = workbook.addWorksheet(`${project.projectName}_付款`);
+      const paymentSheetName = getUniqueSheetName(`${baseName}_付款`);
+      const paymentSheet = workbook.addWorksheet(paymentSheetName);
       setupPaymentSheet(paymentSheet, project, payments.filter(p => p.projectId === project.projectId));
 
       // 欠账工作表
-      const debtSheet = workbook.addWorksheet(`${project.projectName}_欠账`);
+      const debtSheetName = getUniqueSheetName(`${baseName}_欠账`);
+      const debtSheet = workbook.addWorksheet(debtSheetName);
       setupDebtSheet(debtSheet, project, debts.filter(d => d.projectId === project.projectId));
 
       // 汇总工作表
-      const summarySheet = workbook.addWorksheet(`${project.projectName}_汇总`);
+      const summarySheetName = getUniqueSheetName(`${baseName}_汇总`);
+      const summarySheet = workbook.addWorksheet(summarySheetName);
       setupSummarySheet(summarySheet, project, trucks, payments);
     });
 

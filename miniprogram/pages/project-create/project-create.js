@@ -18,7 +18,8 @@ Page({
     maxDate: '',
     showDeletePreset: false,
     deleteType: '',
-    deleteIndex: -1
+    deleteIndex: -1,
+    foremanPhoneMap: {} // 工头-电话映射数据
   },
 
   onLoad(options) {
@@ -74,34 +75,128 @@ Page({
     const foremanPhones = [...new Set(projects.map(p => p.foremanPhone).filter(p => p))];
 
     // 预设项目
-    const presetProjects = [
-      ...projectNames,
+    const presetProjects = app.getPresetList('project', [
       '一期工程',
       '二期工程',
       '市政道路',
       '桥梁建设',
       '地下管网'
-    ];
+    ], projectNames);
 
     // 预设工头
-    const presetForemen = [
-      ...foremanNames,
+    const presetForemen = app.getPresetList('foreman', [
       '张三',
       '李四',
       '王五',
       '赵六',
       '钱七'
-    ];
+    ], foremanNames);
 
     // 预设工头电话
-    const presetPhones = [
-      ...foremanPhones
-    ];
+    const presetPhones = app.getPresetList('phone', [], foremanPhones);
+
+    // 加载工头-电话映射数据，并从历史项目中提取
+    let foremanPhoneMap = this.loadForemanPhoneMap();
+
+    // 如果映射数据为空，从历史项目中提取工头-电话对应关系
+    if (!foremanPhoneMap || Object.keys(foremanPhoneMap).length === 0) {
+      console.log('工头-电话映射数据为空，从历史项目中提取...');
+      foremanPhoneMap = this.extractForemanPhoneFromProjects(projects);
+      this.saveForemanPhoneMap(foremanPhoneMap);
+    }
+
+    // 调试信息
+    console.log('=== 加载预设数据 ===');
+    console.log('工头-电话映射数据:', foremanPhoneMap);
+    console.log('是否包含苏伟:', foremanPhoneMap['苏伟']);
 
     this.setData({
       presetProjects,
       presetForemen,
-      presetPhones
+      presetPhones,
+      foremanPhoneMap
+    });
+  },
+
+  // 从历史项目中提取工头-电话对应关系
+  extractForemanPhoneFromProjects(projects) {
+    const foremanPhoneMap = {};
+
+    projects.forEach(project => {
+      const foreman = project.foreman;
+      const phone = project.foremanPhone;
+
+      if (foreman && phone) {
+        // 如果工头已存在，检查电话是否重复
+        if (!foremanPhoneMap[foreman]) {
+          foremanPhoneMap[foreman] = []; // 初始化电话数组
+        }
+
+        // 确保是数组格式
+        if (!Array.isArray(foremanPhoneMap[foreman])) {
+          foremanPhoneMap[foreman] = [foremanPhoneMap[foreman]];
+        }
+
+        // 添加电话（避免重复）
+        if (!foremanPhoneMap[foreman].includes(phone)) {
+          foremanPhoneMap[foreman].push(phone);
+        }
+      }
+    });
+
+    console.log('从历史项目提取的工头-电话映射:', foremanPhoneMap);
+    return foremanPhoneMap;
+  },
+
+  // 加载工头-电话映射数据
+  loadForemanPhoneMap() {
+    try {
+      const mapData = wx.getStorageSync('foremanPhoneMap') || '{}';
+      return JSON.parse(mapData);
+    } catch (error) {
+      console.error('加载工头-电话映射失败:', error);
+      return {};
+    }
+  },
+
+  // 保存工头-电话映射数据
+  saveForemanPhoneMap(foremanPhoneMap) {
+    try {
+      wx.setStorageSync('foremanPhoneMap', JSON.stringify(foremanPhoneMap));
+    } catch (error) {
+      console.error('保存工头-电话映射失败:', error);
+    }
+  },
+
+  // 显示工头电话选择弹窗（当工头有多个电话时）
+  showForemanPhoneSelector(foreman) {
+    const foremanPhoneMap = this.data.foremanPhoneMap || {};
+    const phones = foremanPhoneMap[foreman];
+
+    if (!phones || phones.length === 0) {
+      return; // 没有电话记录
+    }
+
+    if (phones.length === 1) {
+      // 只有一个电话，直接填充
+      this.setData({ foremanPhone: phones[0] });
+      return;
+    }
+
+    // 多个电话，显示选择弹窗
+    const phoneOptions = phones.map(phone => ({
+      text: phone,
+      value: phone
+    }));
+
+    wx.showActionSheet({
+      itemList: phones,
+      success: (res) => {
+        if (res.tapIndex >= 0) {
+          const selectedPhone = phones[res.tapIndex];
+          this.setData({ foremanPhone: selectedPhone });
+        }
+      }
     });
   },
 
@@ -112,12 +207,46 @@ Page({
 
   // 工头输入
   onForemanInput(e) {
-    this.setData({ foreman: e.detail.value });
+    const foreman = e.detail.value;
+    this.setData({ foreman });
+
+    // 调试信息
+    console.log('工头输入:', foreman);
+    console.log('工头-电话映射数据:', this.data.foremanPhoneMap);
+
+    // 检查是否有对应的电话记录
+    const foremanPhoneMap = this.data.foremanPhoneMap || {};
+    if (foreman && foremanPhoneMap[foreman]) {
+      console.log('找到工头电话记录:', foremanPhoneMap[foreman]);
+      const phones = foremanPhoneMap[foreman];
+      if (Array.isArray(phones)) {
+        // 多个电话，显示选择弹窗
+        if (phones.length === 1) {
+          // 只有一个电话，直接填充
+          console.log('单个电话，直接填充:', phones[0]);
+          this.setData({ foremanPhone: phones[0] });
+        } else {
+          // 多个电话，延迟显示选择弹窗避免输入时频繁弹出
+          console.log('多个电话，延迟显示选择弹窗:', phones);
+          clearTimeout(this.phoneSelectorTimer);
+          this.phoneSelectorTimer = setTimeout(() => {
+            this.showForemanPhoneSelector(foreman);
+          }, 500);
+        }
+      } else {
+        // 兼容旧格式，单个电话直接填充
+        console.log('旧格式，直接填充:', phones);
+        this.setData({ foremanPhone: phones });
+      }
+    } else {
+      console.log('未找到工头电话记录:', foreman);
+    }
   },
 
   // 工头电话输入
   onForemanPhoneInput(e) {
-    this.setData({ foremanPhone: e.detail.value });
+    const phone = e.detail.value;
+    this.setData({ foremanPhone: phone });
   },
 
   // 选择预设项目
@@ -131,6 +260,34 @@ Page({
     if (this.data.showDeletePreset) return;
     const name = e.currentTarget.dataset.name;
     this.setData({ foreman: name });
+
+    // 调试信息
+    console.log('选择预设工头:', name);
+    console.log('工头-电话映射数据:', this.data.foremanPhoneMap);
+
+    // 自动填充对应的电话
+    const foremanPhoneMap = this.data.foremanPhoneMap || {};
+    if (name && foremanPhoneMap[name]) {
+      console.log('找到工头电话记录:', foremanPhoneMap[name]);
+      const phones = foremanPhoneMap[name];
+      if (Array.isArray(phones)) {
+        if (phones.length === 1) {
+          // 只有一个电话，直接填充
+          console.log('单个电话，直接填充:', phones[0]);
+          this.setData({ foremanPhone: phones[0] });
+        } else {
+          // 多个电话，显示选择弹窗
+          console.log('多个电话，显示选择弹窗:', phones);
+          this.showForemanPhoneSelector(name);
+        }
+      } else {
+        // 兼容旧格式，单个电话直接填充
+        console.log('旧格式，直接填充:', phones);
+        this.setData({ foremanPhone: phones });
+      }
+    } else {
+      console.log('未找到工头电话记录:', name);
+    }
   },
 
   // 选择预设工头电话
@@ -187,6 +344,12 @@ Page({
 
     // 保存项目
     app.saveProject(project);
+    app.addPresetValue('project', project.projectName);
+    app.addPresetValue('foreman', project.foreman);
+    app.addPresetValue('phone', project.foremanPhone);
+
+    // 保存工头-电话映射关系
+    this.saveForemanPhoneMapping(this.data.foreman, this.data.foremanPhone);
 
     showToast(this.data.isEdit ? '项目修改成功' : '项目创建成功', 'success');
 
@@ -194,6 +357,46 @@ Page({
     setTimeout(() => {
       wx.navigateBack();
     }, 1500);
+  },
+
+  // 保存工头-电话映射关系
+  saveForemanPhoneMapping(foreman, phone) {
+    if (!foreman || !phone) return;
+
+    try {
+      const mapData = wx.getStorageSync('foremanPhoneMap') || '{}';
+      const foremanPhoneMap = JSON.parse(mapData);
+
+      // 获取现有电话列表
+      let phones = foremanPhoneMap[foreman] || [];
+
+      // 兼容旧格式，如果不是数组则转换为数组
+      if (!Array.isArray(phones)) {
+        phones = [phones];
+      }
+
+      // 检查电话是否已存在
+      if (!phones.includes(phone)) {
+        // 添加新电话到列表
+        phones.push(phone);
+
+        // 限制最多保存5个电话（避免数据过大）
+        if (phones.length > 5) {
+          phones = phones.slice(-5); // 保留最近的5个
+        }
+
+        // 更新映射关系
+        foremanPhoneMap[foreman] = phones;
+
+        // 保存到本地存储
+        wx.setStorageSync('foremanPhoneMap', JSON.stringify(foremanPhoneMap));
+        console.log('工头-电话映射已保存:', foreman, '->', phones);
+      } else {
+        console.log('工头电话已存在，无需重复保存:', foreman, '->', phone);
+      }
+    } catch (error) {
+      console.error('保存工头-电话映射失败:', error);
+    }
   },
 
   // 获取项目创建时间（编辑模式需要保留）
@@ -239,6 +442,7 @@ Page({
           if (key) {
             const list = [...this.data[key]];
             list.splice(index, 1);
+            app.removePresetValue(type, this.data[key][index]);
             this.setData({
               [key]: list,
               showDeletePreset: false,
@@ -250,5 +454,13 @@ Page({
         }
       }
     });
+  },
+
+  // 页面卸载时清除定时器
+  onUnload() {
+    if (this.phoneSelectorTimer) {
+      clearTimeout(this.phoneSelectorTimer);
+      this.phoneSelectorTimer = null;
+    }
   }
 });

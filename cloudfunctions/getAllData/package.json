@@ -1,0 +1,9 @@
+{
+  "name": "getAllData",
+  "version": "1.0.0",
+  "description": "获取所有云数据库数据",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

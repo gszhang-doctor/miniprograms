@@ -78,6 +78,40 @@
 ## 数据库权限规则
 
 ### database.rules.json
+
+如果需要多用户协作共享数据，使用以下权限规则（所有用户可读写）：
+
+```json
+{
+  "projects": {
+    "read": true,
+    "write": true
+  },
+  "trucks": {
+    "read": true,
+    "write": true
+  },
+  "payments": {
+    "read": true,
+    "write": true
+  },
+  "debts": {
+    "read": true,
+    "write": true
+  },
+  "bonusRecords": {
+    "read": true,
+    "write": true
+  },
+  "userInfo": {
+    "read": true,
+    "write": true
+  }
+}
+```
+
+如果需要按创建者权限（仅创建者可读写），使用以下权限规则：
+
 ```json
 {
   "projects": {
@@ -105,8 +139,10 @@
 2. 开通云开发服务（如未开通）
 3. 创建或选择已有的云开发环境
 4. 复制环境ID，替换 `app.js` 中的 `your-env-id`
-5. 在云开发控制台创建数据库集合：projects, trucks, payments, debts
-6. 设置数据库权限规则为"仅创建者可读写"
+5. 在云开发控制台创建数据库集合：projects, trucks, payments, debts, bonusRecords, userInfo
+6. **重要：设置数据库权限规则**
+   - 如果需要多用户协作共享数据（推荐）：设置为"所有用户可读写"
+   - 如果需要数据隔离：设置为"仅创建者可读写"
 7. 重新编译小程序，即可使用云上传和云下载功能
 
 ## 注意事项

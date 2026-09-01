@@ -8,6 +8,10 @@
         <text class="header-btn-icon">📤</text>
         <text class="header-btn-text">导出</text>
       </view>
+      <view class="header-btn" bindtap="exportCsv">
+        <text class="header-btn-icon">CSV</text>
+        <text class="header-btn-text">数据</text>
+      </view>
       <view class="header-btn" bindtap="importData">
         <text class="header-btn-icon">📁</text>
         <text class="header-btn-text">导入</text>

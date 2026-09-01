@@ -39,6 +39,7 @@ Page({
 
     // 计算每日车次数量
     const trucks = app.getTrucks(this.data.projectId);
+    const trucksByTime = [...trucks].sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
     dailyStats.forEach(day => {
       day.count = trucks.filter(t => t.createTime.includes(day.date)).length;
     });
@@ -85,7 +86,7 @@ Page({
     }).sort((a, b) => b.count - a.count);
 
     // 获取最后一次车次的司机
-    const lastDriver = trucks.length > 0 ? trucks[trucks.length - 1].driverName : '';
+    const lastDriver = trucksByTime.length > 0 ? trucksByTime[0].driverName : '';
 
     // 处理付款方式分布
     const paymentMethodList = Object.entries(stats.paymentMethodStats || {}).map(([method, amount]) => {
@@ -102,6 +103,8 @@ Page({
         totalTrucks: stats.totalTrucks,
         totalQuantity: stats.totalQuantity.toFixed(1),
         totalAmount: stats.totalAmount.toFixed(2),
+        concreteAmount: parseFloat(stats.concreteAmount).toFixed(2),
+        pumpCost: parseFloat(stats.pumpCost).toFixed(2),
         paidAmount: stats.paidAmount.toFixed(2),
         unpaidAmount: stats.unpaidAmount.toFixed(2)
       },

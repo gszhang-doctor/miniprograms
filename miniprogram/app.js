@@ -120,6 +120,9 @@ App({
     if (!wx.getStorageSync('userName')) {
       wx.setStorageSync('userName', '');
     }
+    if (!wx.getStorageSync('presetConfig')) {
+      wx.setStorageSync('presetConfig', { deleted: {}, custom: {} });
+    }
   },
 
   // 获取项目列表
@@ -197,7 +200,6 @@ App({
           await db.collection('debts').doc(debt.debtId).remove();
         }
       } catch (error) {
-        console.error('删除云数据失败:', error);
       }
     }
 
@@ -233,7 +235,7 @@ App({
     const count = trucks.length;
     const projects = this.getProjects();
     const project = projects.find(p => p.projectId === projectId);
-    
+
     if (project) {
       project.totalTrucks = count;
       this.saveProject(project);
@@ -257,7 +259,6 @@ App({
         const db = wx.cloud.database();
         await db.collection('trucks').doc(truckId).remove();
       } catch (error) {
-        console.error('删除云数据失败:', error);
       }
     }
 
@@ -296,7 +297,6 @@ App({
         const db = wx.cloud.database();
         await db.collection('payments').doc(paymentId).remove();
       } catch (error) {
-        console.error('删除云数据失败:', error);
       }
     }
 
@@ -344,7 +344,6 @@ App({
         const db = wx.cloud.database();
         await db.collection('debts').doc(debtId).remove();
       } catch (error) {
-        console.error('删除云数据失败:', error);
       }
     }
 
@@ -374,12 +373,48 @@ App({
   generateTruckNo(projectId, date) {
     const dateStr = date.replace(/-/g, '');
     const trucks = wx.getStorageSync('trucks') || [];
-    // 只计算当前项目的当天车次
-    const todayTrucks = trucks.filter(t =>
-      t.projectId === projectId && t.createTime.startsWith(date)
-    );
-    const seq = (todayTrucks.length + 1).toString().padStart(3, '0');
+    // 车次序号按项目累计，避免跨日期或沿用上次记录时重复编号
+    const projectTrucks = trucks.filter(t => t.projectId === projectId);
+    const maxSeq = projectTrucks.reduce((max, truck) => {
+      const match = String(truck.truckNo || '').match(/-(\d+)$/);
+      return match ? Math.max(max, parseInt(match[1], 10) || 0) : max;
+    }, 0);
+    const seq = (maxSeq + 1).toString().padStart(3, '0');
     return `${dateStr}-${seq}`;
+  },
+
+  // 预设项配置：删除和自定义值持久化，避免页面重载后丢失
+  getPresetConfig() {
+    return wx.getStorageSync('presetConfig') || { deleted: {}, custom: {} };
+  },
+
+  getPresetList(type, defaults = [], history = []) {
+    const config = this.getPresetConfig();
+    const deleted = new Set(config.deleted && config.deleted[type] || []);
+    const values = [...new Set([...(defaults || []), ...(config.custom && config.custom[type] || []), ...(history || [])])];
+    return values.filter(value => !deleted.has(String(value)) && !deleted.has(value));
+  },
+
+  addPresetValue(type, value) {
+    if (value === undefined || value === null || value === '') return;
+    const config = this.getPresetConfig();
+    config.custom = config.custom || {};
+    config.custom[type] = [...new Set([...(config.custom[type] || []), value])];
+    config.deleted = config.deleted || {};
+    config.deleted[type] = (config.deleted[type] || []).filter(item => String(item) !== String(value));
+    wx.setStorageSync('presetConfig', config);
+    this.autoUploadIfEnabled();
+  },
+
+  removePresetValue(type, value) {
+    const config = this.getPresetConfig();
+    config.deleted = config.deleted || {};
+    config.deleted[type] = [...new Set([...(config.deleted[type] || []), value])];
+    if (config.custom && config.custom[type]) {
+      config.custom[type] = config.custom[type].filter(item => String(item) !== String(value));
+    }
+    wx.setStorageSync('presetConfig', config);
+    this.autoUploadIfEnabled();
   },
 
   // 计算项目统计数据
@@ -464,6 +499,7 @@ App({
       const debts = wx.getStorageSync('debts') || [];
       const bonusRecords = wx.getStorageSync('bonusRecords') || {};
       const userName = this.getUserName();
+      const presetConfig = this.getPresetConfig();
 
       const serverTime = new Date().toISOString();
 
@@ -477,7 +513,6 @@ App({
             }
           });
         } catch (err) {
-          console.warn('上传项目失败:', project.projectId, err);
         }
       }
 
@@ -491,7 +526,6 @@ App({
             }
           });
         } catch (err) {
-          console.warn('上传车次失败:', truck.truckId, err);
         }
       }
 
@@ -505,7 +539,6 @@ App({
             }
           });
         } catch (err) {
-          console.warn('上传付款失败:', payment.paymentId, err);
         }
       }
 
@@ -519,7 +552,6 @@ App({
             }
           });
         } catch (err) {
-          console.warn('上传欠账失败:', debt.debtId, err);
         }
       }
 
@@ -532,7 +564,6 @@ App({
           }
         });
       } catch (err) {
-        console.warn('上传分红记录失败:', err);
       }
 
       // 上传用户姓名
@@ -544,7 +575,27 @@ App({
           }
         });
       } catch (err) {
-        console.warn('上传用户姓名失败:', err);
+      }
+
+      try {
+        await db.collection('presetConfig').doc('current').set({
+          data: { config: presetConfig, updateTime: serverTime }
+        });
+      } catch (err) {
+      }
+
+      // 上传工头-电话映射
+      try {
+        const foremanPhoneMap = wx.getStorageSync('foremanPhoneMap') || '{}';
+        await db.collection('foremanPhoneMap').doc('current').set({
+          data: {
+            mapData: foremanPhoneMap,
+            updateTime: serverTime
+          }
+        });
+        console.log('工头-电话映射已上传到云端');
+      } catch (err) {
+        console.log('上传工头-电话映射失败:', err);
       }
 
       if (!silent) {
@@ -561,7 +612,6 @@ App({
       if (!silent) {
         wx.hideLoading();
       }
-      console.error('上传失败:', error);
 
       let errorMsg = '上传失败';
       if (error.errMsg) {
@@ -584,6 +634,59 @@ App({
     }
   },
 
+  // 从云端获取所有数据的辅助函数（使用云函数绕过 20 条限制）
+  async fetchAllFromCloud(collectionName) {
+    try {
+      // 调用云函数获取所有数据
+      const res = await wx.cloud.callFunction({
+        name: 'getAllData',
+        data: {
+          collectionName: collectionName
+        }
+      });
+
+      if (res.result && res.result.success) {
+        return res.result.data || [];
+      } else {
+        // 如果云函数失败，降级使用前端查询
+        return await this.fetchAllFromCloudFallback(collectionName);
+      }
+    } catch (error) {
+      // 如果云函数调用失败，降级使用前端查询
+      return await this.fetchAllFromCloudFallback(collectionName);
+    }
+  },
+
+  // 前端查询降级方案（受 20 条限制）
+  async fetchAllFromCloudFallback(collectionName) {
+    const db = wx.cloud.database();
+    const MAX_LIMIT = 100;
+    let allData = [];
+    let hasMore = true;
+    let skip = 0;
+
+    while (hasMore) {
+      try {
+        const res = await db.collection(collectionName)
+          .limit(MAX_LIMIT)
+          .skip(skip)
+          .get();
+
+        allData = allData.concat(res.data || []);
+
+        if (res.data.length === 0 || res.data.length < MAX_LIMIT) {
+          hasMore = false;
+        } else {
+          skip += MAX_LIMIT;
+        }
+      } catch (error) {
+        break;
+      }
+    }
+
+    return allData;
+  },
+
   // 从云数据库同步数据（智能合并）
   async syncFromCloud(silent = false) {
     if (!wx.cloud) {
@@ -604,70 +707,49 @@ App({
       const localDebts = wx.getStorageSync('debts') || [];
       const localBonusRecords = wx.getStorageSync('bonusRecords') || {};
       const localUserName = this.getUserName();
+      const localPresetConfig = this.getPresetConfig();
 
-      // 从云端获取所有数据
-      const [projectsRes, trucksRes, paymentsRes, debtsRes, bonusRes, userRes] = await Promise.all([
-        db.collection('projects').get(),
-        db.collection('trucks').get(),
-        db.collection('payments').get(),
-        db.collection('debts').get(),
-        db.collection('bonusRecords').get(),
-        db.collection('userInfo').get()
-      ]);
+      // 从云端获取所有数据（使用分页查询）
+      const cloudProjects = await this.fetchAllFromCloud('projects');
+      const cloudTrucks = await this.fetchAllFromCloud('trucks');
+      const cloudPayments = await this.fetchAllFromCloud('payments');
+      const cloudDebts = await this.fetchAllFromCloud('debts');
 
-      const cloudProjects = projectsRes.data || [];
-      const cloudTrucks = trucksRes.data || [];
-      const cloudPayments = paymentsRes.data || [];
-      const cloudDebts = debtsRes.data || [];
+      // bonusRecords 和 userInfo 使用单条记录方式
+      const bonusRes = await db.collection('bonusRecords').get();
+      const userRes = await db.collection('userInfo').get();
+      const foremanMapRes = await db.collection('foremanPhoneMap').get();
+      const presetConfigRes = await db.collection('presetConfig').get().catch(() => ({ data: [] }));
+
       const cloudBonusRecords = (bonusRes.data && bonusRes.data.length > 0) ? bonusRes.data[0].records || {} : {};
       const cloudUserName = (userRes.data && userRes.data.length > 0) ? userRes.data[0].userName || '' : '';
+      const cloudForemanPhoneMap = (foremanMapRes.data && foremanMapRes.data.length > 0) ? foremanMapRes.data[0].mapData || '{}' : '{}';
+      const cloudPresetConfig = (presetConfigRes.data && presetConfigRes.data.length > 0) ? presetConfigRes.data[0].config : null;
 
-      console.log('云端数据:', {
-        projects: cloudProjects.length,
-        trucks: cloudTrucks.length,
-        payments: cloudPayments.length,
-        debts: cloudDebts.length,
-        bonusRecords: Object.keys(cloudBonusRecords).length,
-        userName: cloudUserName
-      });
+      // 调试信息：打印云端车次数据
+      console.log('=== 云同步调试信息 ===');
+      console.log('本地车次数量:', localTrucks.length);
+      console.log('云端车次数量:', cloudTrucks.length);
+      console.log('云端车次的 _openid 列表:', [...new Set(cloudTrucks.map(t => t._openid))]);
+      console.log('云端车次数据包含的 projectId 列表:', [...new Set(cloudTrucks.map(t => t.projectId))]);
+      console.log('云端车次数据包含的 truckId 列表:', [...new Set(cloudTrucks.map(t => t._id))]);
 
-      // 智能合并数据
+      // 特别检查高井培华项目相关的车次
+      const gaojingTrucks = cloudTrucks.filter(t => t.projectId === 'project_1772859240727_744');
+      console.log('高井培华项目的车次数量:', gaojingTrucks.length);
+      console.log('高井培华项目的车次详情:', gaojingTrucks.map(t => ({truckId: t.truckId, projectId: t.projectId, driverName: t.driverName})));
+
+      // 智能合并数据 - 重写车次合并逻辑
       const mergedProjects = this.smartMerge(localProjects, cloudProjects, 'projectId');
-      const mergedTrucks = this.smartMerge(localTrucks, cloudTrucks, 'truckId');
+      const mergedTrucks = this.mergeTrucksData(localTrucks, cloudTrucks);
       const mergedPayments = this.smartMerge(localPayments, cloudPayments, 'paymentId');
       const mergedDebts = this.smartMerge(localDebts, cloudDebts, 'debtId');
 
-      // 合并分红记录
-      const mergedBonusRecords = { ...localBonusRecords, ...cloudBonusRecords };
-
-      // 合并用户姓名（优先使用本地姓名）
-      const mergedUserName = localUserName || cloudUserName;
-
-      // 排序项目
-      mergedProjects.sort((a, b) => {
-        const dateA = a.createDate || '';
-        const dateB = b.createDate || '';
-
-        if (!dateA && !dateB) return 0;
-        if (!dateA) return 1;
-        if (!dateB) return -1;
-
-        const dateCompare = dateB.localeCompare(dateA);
-        if (dateCompare !== 0) {
-          return dateCompare;
-        }
-
-        const timeA = a.createTime || '';
-        const timeB = b.createTime || '';
-
-        if (!timeA && !timeB) return 0;
-        if (!timeA) return 1;
-        if (!timeB) return -1;
-
-        const timeDateA = new Date(timeA);
-        const timeDateB = new Date(timeB);
-        return timeDateB - timeDateA;
-      });
+      // 检查合并后的高井培华项目数据
+      const gaojingProject = mergedProjects.find(p => p.projectId === 'project_1772859240727_744');
+      console.log('=== 合并后高井培华项目检查 ===');
+      console.log('合并后项目数据:', gaojingProject);
+      console.log('合并后项目 totalTrucks:', gaojingProject?.totalTrucks);
 
       // 保存到本地存储
       wx.setStorageSync('projects', mergedProjects);
@@ -675,9 +757,55 @@ App({
       wx.setStorageSync('payments', mergedPayments);
       wx.setStorageSync('debts', mergedDebts);
       wx.setStorageSync('bonusRecords', mergedBonusRecords);
-      if (mergedUserName && !localUserName) {
-        wx.setStorageSync('userName', mergedUserName);
+      if (cloudUserName && !localUserName) {
+        wx.setStorageSync('userName', cloudUserName);
       }
+      if (cloudPresetConfig && (!localPresetConfig || Object.keys(localPresetConfig.custom || {}).length === 0)) {
+        wx.setStorageSync('presetConfig', cloudPresetConfig);
+      }
+
+      // 合并并保存工头-电话映射
+      try {
+        const localForemanPhoneMapData = wx.getStorageSync('foremanPhoneMap') || '{}';
+        const localForemanPhoneMap = JSON.parse(localForemanPhoneMapData);
+        const parsedCloudForemanPhoneMap = JSON.parse(cloudForemanPhoneMap);
+
+        // 合并映射关系，云端优先
+        const mergedForemanPhoneMap = { ...localForemanPhoneMap, ...parsedCloudForemanPhoneMap };
+
+        wx.setStorageSync('foremanPhoneMap', JSON.stringify(mergedForemanPhoneMap));
+        console.log('工头-电话映射已合并并保存');
+      } catch (error) {
+        console.error('合并工头-电话映射失败:', error);
+      }
+
+      // 重新计算所有项目的统计数据
+      mergedProjects.forEach(project => {
+        const stats = this.calculateProjectStats(project.projectId);
+
+        // 直接更新项目对象的统计字段
+        project.totalTrucks = stats.totalTrucks;
+        project.totalQuantity = stats.totalQuantity;
+        project.totalAmount = stats.totalAmount;
+        project.concreteAmount = stats.concreteAmount;
+        project.pumpCost = stats.pumpCost;
+        project.paidAmount = stats.paidAmount;
+        project.unpaidAmount = stats.unpaidAmount;
+      });
+
+      // 保存更新后的项目数据
+      wx.setStorageSync('projects', mergedProjects);
+      console.log('=== 项目数据保存完成 ===');
+
+      // 检查保存后的数据
+      const savedGaojingProject = mergedProjects.find(p => p.projectId === 'project_1772859240727_744');
+      console.log('高井培华项目保存后的车次数量:', savedGaojingProject?.totalTrucks);
+      console.log('高井培华项目保存后的完整数据:', savedGaojingProject);
+
+      // 从存储中重新读取验证
+      const storedProjects = wx.getStorageSync('projects') || [];
+      const storedGaojingProject = storedProjects.find(p => p.projectId === 'project_1772859240727_744');
+      console.log('存储中高井培华项目的车次数量:', storedGaojingProject?.totalTrucks);
 
       if (!silent) {
         wx.hideLoading();
@@ -693,7 +821,6 @@ App({
       if (!silent) {
         wx.hideLoading();
       }
-      console.error('同步失败:', error);
 
       let errorMsg = '同步失败';
       if (error.errMsg) {
@@ -720,28 +847,112 @@ App({
   smartMerge(localData, cloudData, idField) {
     const mergedMap = new Map();
 
-    // 先添加本地数据
+    // 先添加本地数据，使用 idField 作为 key
     localData.forEach(item => {
-      mergedMap.set(item[idField], item);
+      if (item[idField]) {
+        mergedMap.set(item[idField], item);
+      }
     });
 
     // 云端数据合并，根据 updateTime 比较保留最新的
     cloudData.forEach(cloudItem => {
-      const id = cloudItem[idField];
-      const localItem = mergedMap.get(id);
+      // 对于项目数据，使用 projectId 字段作为业务 ID
+      // 对于其他数据，使用 _id 作为业务 ID
+      const businessId = idField === 'projectId' ? (cloudItem.projectId || cloudItem._id) : cloudItem._id;
+
+      if (!businessId) {
+        return;
+      }
+
+      const localItem = mergedMap.get(businessId);
 
       if (localItem) {
         // 都存在，比较更新时间
         const localTime = localItem.updateTime ? new Date(localItem.updateTime).getTime() : 0;
         const cloudTime = cloudItem.updateTime ? new Date(cloudItem.updateTime).getTime() : 0;
 
-        if (cloudTime > localTime) {
-          mergedMap.set(id, cloudItem);
+        // 特别调试高井培华项目
+        if (idField === 'projectId' && businessId === 'project_1772859240727_744') {
+          console.log('=== 高井培华项目合并调试 ===');
+          console.log('本地数据 totalTrucks:', localItem.totalTrucks);
+          console.log('云端数据 totalTrucks:', cloudItem.totalTrucks);
+          console.log('本地更新时间:', localTime);
+          console.log('云端更新时间:', cloudTime);
         }
-        // 否则保留本地数据
+
+        if (cloudTime > localTime) {
+          // 确保云端数据有正确的 idField 字段
+          if (!cloudItem[idField]) {
+            cloudItem[idField] = businessId;
+          }
+
+          // 对于项目数据，清空统计字段，让后续重新计算
+          if (idField === 'projectId') {
+            cloudItem.totalTrucks = 0;
+            cloudItem.totalQuantity = 0;
+            cloudItem.totalAmount = 0;
+            cloudItem.concreteAmount = 0;
+            cloudItem.pumpCost = 0;
+            cloudItem.paidAmount = 0;
+            cloudItem.unpaidAmount = 0;
+          }
+
+          mergedMap.set(businessId, cloudItem);
+        } else {
+          // 保留本地数据
+          mergedMap.set(businessId, localItem);
+        }
       } else {
         // 只有云端有，添加到本地
-        mergedMap.set(id, cloudItem);
+        // 确保云端数据有正确的 idField 字段
+        if (!cloudItem[idField]) {
+          cloudItem[idField] = businessId;
+        }
+        mergedMap.set(businessId, cloudItem);
+      }
+    });
+
+    return Array.from(mergedMap.values());
+  },
+
+  // 车次数据专用合并函数
+  mergeTrucksData(localTrucks, cloudTrucks) {
+    const mergedMap = new Map();
+
+    // 先添加本地数据
+    localTrucks.forEach(truck => {
+      if (truck.truckId) {
+        mergedMap.set(truck.truckId, truck);
+      }
+    });
+
+    // 合并云端数据
+    cloudTrucks.forEach(cloudTruck => {
+      // 云端数据的 _id 就是 truckId
+      const truckId = cloudTruck._id;
+
+      if (!truckId) {
+        return;
+      }
+
+      // 确保 truckId 字段存在
+      if (!cloudTruck.truckId) {
+        cloudTruck.truckId = truckId;
+      }
+
+      const localTruck = mergedMap.get(truckId);
+
+      if (localTruck) {
+        // 比较更新时间，保留最新的
+        const localTime = localTruck.updateTime ? new Date(localTruck.updateTime).getTime() : 0;
+        const cloudTime = cloudTruck.updateTime ? new Date(cloudTruck.updateTime).getTime() : 0;
+
+        if (cloudTime >= localTime) {
+          mergedMap.set(truckId, cloudTruck);
+        }
+      } else {
+        // 云端独有的车次，直接添加
+        mergedMap.set(truckId, cloudTruck);
       }
     });
 
@@ -802,5 +1013,6 @@ App({
     wx.setStorageSync('debts', []);
     wx.setStorageSync('bonusRecords', {});
     wx.setStorageSync('userName', '');
+    wx.setStorageSync('presetConfig', { deleted: {}, custom: {} });
   }
 });
